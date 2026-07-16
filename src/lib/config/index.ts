@@ -132,6 +132,39 @@ function hostOf(url: string): string {
   }
 }
 
+/**
+ * Targeted SSRF guard for the live connection probe: reject link-local and
+ * cloud-metadata hosts. This blocks the highest-value target of the
+ * pre-configuration probe (the cloud metadata endpoint at 169.254.169.254)
+ * WITHOUT breaking the common same-host Headscale deploy, which reaches it over
+ * loopback or a private LAN address - both intentionally still allowed, since
+ * blocking them would make the tester useless for the majority of installs.
+ * Returns an operator-facing message when blocked, or null when the host is ok.
+ */
+function blockedProbeHost(url: string): string | null {
+  let host: string;
+  try {
+    host = new URL(url).hostname;
+  } catch {
+    return null;
+  }
+  // Lowercase and strip IPv6 literal brackets for comparison.
+  const h = host.toLowerCase().replace(/^\[/, "").replace(/\]$/, "");
+  // IPv4 link-local (169.254.0.0/16), which includes the cloud metadata IP.
+  if (/^169\.254\.\d{1,3}\.\d{1,3}$/.test(h)) {
+    return "That is a link-local address (169.254.x.x); it can't be a Headscale control plane.";
+  }
+  // IPv6 link-local (fe80::/10) and the AWS IMDSv6 metadata address.
+  if (h.startsWith("fe80:") || h === "fd00:ec2::254") {
+    return "That is a link-local address; it can't be a Headscale control plane.";
+  }
+  // Well-known cloud metadata hostnames.
+  if (h === "metadata.google.internal" || h === "metadata") {
+    return "That host is a cloud metadata endpoint, not a Headscale control plane.";
+  }
+  return null;
+}
+
 /* --------------------------------------------------------------------------
  * Secret encoding
  *
@@ -450,6 +483,11 @@ export async function testHeadscaleConnection(
   }
   if (!apiKey.trim()) {
     return { ok: false, status: "error", message: "Enter an API key to test." };
+  }
+
+  const blocked = blockedProbeHost(normalized);
+  if (blocked) {
+    return { ok: false, status: "error", message: blocked };
   }
 
   const host = hostOf(normalized);

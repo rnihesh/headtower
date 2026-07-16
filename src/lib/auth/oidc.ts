@@ -36,6 +36,7 @@
 import * as client from "openid-client";
 import { cookies } from "next/headers";
 import { getConfig, type OidcConfig } from "@/lib/config";
+import { cookiePath } from "./session";
 import {
   getProviderSecrets,
   hasEnabledProvider,
@@ -114,10 +115,21 @@ function resolveProvider(providerId: string): ResolvedProvider {
 /** Whether OIDC mode is active on ANY provider. Never throws; treats bad config as "disabled". */
 export function isOidcEnabled(): boolean {
   try {
-    return getConfig().oidc !== null || hasEnabledProvider();
+    return isOidcEnabledStrict();
   } catch {
     return false;
   }
+}
+
+/**
+ * Like {@link isOidcEnabled} but does NOT swallow errors. The proxy gate uses
+ * this so a transient config-store read failure can't be silently misread as
+ * "auth disabled" (which would open the console unauthenticated); it catches and
+ * fails closed instead. Everywhere else, {@link isOidcEnabled}'s "bad config =
+ * disabled" behaviour is the right one.
+ */
+export function isOidcEnabledStrict(): boolean {
+  return getConfig().oidc !== null || hasEnabledProvider();
 }
 
 /** The login page's button list: legacy first (if configured), then every enabled row. */
@@ -229,7 +241,9 @@ export async function beginLogin(
     httpOnly: true,
     secure: secureCookies(),
     sameSite: "lax" as const,
-    path: "/",
+    // Scope to the sub-path mount (e.g. "/admin") like the session cookie, so
+    // these short-lived transaction cookies aren't sent to co-hosted apps.
+    path: cookiePath(),
     maxAge: TRANSACTION_TTL_SECONDS,
   };
   jar.set(STATE_COOKIE, state, options);

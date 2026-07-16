@@ -22,6 +22,7 @@ import {
   HeadscaleTimeoutError,
 } from "@/lib/headscale";
 import { getConfig } from "@/lib/config";
+import { authorize } from "@/lib/authz";
 
 export type CheckStatus = "pass" | "fail" | "skip";
 
@@ -47,6 +48,28 @@ const SUPPORTED_RANGE = "Headscale 0.26 - 0.29";
 
 export async function runDiagnostics(): Promise<DiagnosticsReport> {
   const ranAt = new Date().toISOString();
+
+  // A "use server" action is a public POST endpoint, so re-check the role here
+  // (not just the proxy's authentication) before driving an outbound probe with
+  // the server's stored API key. Diagnostics is a read of settings health.
+  const gate = await authorize("settings.read");
+  if (!gate.ok) {
+    return {
+      ranAt,
+      target: null,
+      checks: [
+        {
+          id: "reachability",
+          label: "Control plane reachable",
+          status: "skip",
+          detail: "Not checked.",
+          hint: gate.reason,
+        },
+        skipped("version", "Server API version", gate.reason),
+        skipped("authorization", "API key authorized", gate.reason),
+      ],
+    };
+  }
 
   // Configuration gate: without a URL + key there is nothing to reach.
   const config = getConfig();

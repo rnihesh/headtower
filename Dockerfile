@@ -43,6 +43,13 @@ RUN mkdir -p /app/data
 COPY --from=build /app/.next/standalone ./
 COPY --from=build /app/.next/static ./.next/static
 COPY --from=build /app/public ./public
+# Drop privileges: run as the built-in unprivileged `node` user (uid 1000), not
+# root. Chown the app tree (incl. /app/data) so the runtime user can read the
+# bundle and write the SQLite store. A FRESH data volume inherits this ownership;
+# an EXISTING root-owned volume must be chowned once on upgrade:
+#   docker compose run --rm --user root headtower chown -R node:node /app/data
+RUN chown -R node:node /app
+USER node
 EXPOSE 3000
 VOLUME ["/app/data"]
 CMD ["node", "server.js"]

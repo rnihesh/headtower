@@ -23,6 +23,7 @@ import {
   readLoginTransaction,
 } from "@/lib/auth/oidc";
 import {
+  cookiePath,
   createSession,
   sessionCookieOptions,
   upsertOidcUser,
@@ -108,9 +109,13 @@ function appUrl(origin: string, path: string): URL {
   return new URL(p, origin);
 }
 
-/** Expire the login-transaction cookies on the outgoing response. */
+/** Expire the login-transaction cookies on the outgoing response. Delete under
+ *  the same base-path scope they were set with, or the browser keeps them. */
 function clearTransaction(response: NextResponse): NextResponse {
-  for (const name of LOGIN_TRANSACTION_COOKIES) response.cookies.delete(name);
+  const path = cookiePath();
+  for (const name of LOGIN_TRANSACTION_COOKIES) {
+    response.cookies.delete({ name, path });
+  }
   return response;
 }
 

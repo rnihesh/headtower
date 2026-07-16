@@ -6,7 +6,8 @@
  *
  * The terminal never talks to the Headtower agent's websocket directly with a
  * long-lived secret - it asks the server for a one-time, 60s-lived token, then
- * opens the websocket itself with that token in the URL. This keeps
+ * opens the websocket itself, passing that token as a WebSocket subprotocol (so
+ * it stays out of proxy access-log request lines). This keeps
  * `HEADTOWER_AGENT_SSH_SECRET` server-only.
  *
  * Token shape, MUST match the agent (see `agent/ssh.go` `verifySSHToken`):

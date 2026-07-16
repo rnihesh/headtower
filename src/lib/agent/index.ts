@@ -15,6 +15,7 @@
  * from a client component.
  */
 
+import { createHmac } from "node:crypto";
 import { getConfig } from "@/lib/config";
 import type { AgentPeer, AgentPeerIndex } from "./types";
 
@@ -22,6 +23,26 @@ export type { AgentPeer, AgentPeerIndex } from "./types";
 
 /** Agents are local sidecars; a read should never hold up a page render. */
 const AGENT_TIMEOUT_MS = 2_000;
+
+/**
+ * Authorization header for the agent's protected reads (/peers), or an empty
+ * object when no shared secret is configured (the agent then leaves /peers
+ * open). Mints a short-lived HMAC token in the same envelope the agent verifies
+ * (see agent/ssh.go `verifyToken`): base64url(payloadJSON).base64url(hmac). The
+ * payload carries only an expiry, so it can't be replayed against the SSH bridge
+ * (which additionally requires host+user).
+ */
+function agentAuthHeaders(): Record<string, string> {
+  const secret = process.env.HEADTOWER_AGENT_SSH_SECRET?.trim();
+  if (!secret) return {};
+  const payload = Buffer.from(
+    JSON.stringify({ exp: Math.floor(Date.now() / 1000) + 30 }),
+    "utf8",
+  );
+  const signature = createHmac("sha256", secret).update(payload).digest();
+  const token = `${payload.toString("base64url")}.${signature.toString("base64url")}`;
+  return { Authorization: `Bearer ${token}` };
+}
 
 /** A shared empty index for the "no agent" path - same surface, nothing in it. */
 const EMPTY_INDEX: AgentPeerIndex = {
@@ -158,7 +179,7 @@ export async function getAgentPeers(): Promise<AgentPeerIndex> {
   const timer = setTimeout(() => controller.abort(), AGENT_TIMEOUT_MS);
   try {
     const response = await fetch(`${base}/peers`, {
-      headers: { Accept: "application/json" },
+      headers: { Accept: "application/json", ...agentAuthHeaders() },
       signal: controller.signal,
       // Live device state; never serve a cached read into the console.
       cache: "no-store",

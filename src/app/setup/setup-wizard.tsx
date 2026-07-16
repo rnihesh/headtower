@@ -35,6 +35,8 @@ export interface SetupWizardProps {
   initialUrl: string;
   /** Whether HEADTOWER_SECRET is set (secrets encrypted at rest). */
   encryptsSecrets: boolean;
+  /** Whether HEADTOWER_SETUP_TOKEN is set, so the wizard must collect it. */
+  requiresToken: boolean;
 }
 
 /**
@@ -42,13 +44,19 @@ export interface SetupWizardProps {
  * persist it all in one atomic write. On-brand schematic console styling; the
  * live connection Test is the load-bearing interaction of step one.
  */
-export function SetupWizard({ initialUrl, encryptsSecrets }: SetupWizardProps) {
+export function SetupWizard({
+  initialUrl,
+  encryptsSecrets,
+  requiresToken,
+}: SetupWizardProps) {
   const [step, setStep] = React.useState(0);
 
   // Step 1 - Connect
   const [url, setUrl] = React.useState(initialUrl);
   const [apiKey, setApiKey] = React.useState("");
   const [revealKey, setRevealKey] = React.useState(false);
+  // Only collected when the server requires it (HEADTOWER_SETUP_TOKEN set).
+  const [token, setToken] = React.useState("");
   const [testing, setTesting] = React.useState(false);
   const [testResult, setTestResult] = React.useState<TestResult | null>(null);
 
@@ -77,7 +85,11 @@ export function SetupWizard({ initialUrl, encryptsSecrets }: SetupWizardProps) {
     setTesting(true);
     try {
       setTestResult(
-        await testConnectionAction({ url: url.trim(), apiKey: apiKey.trim() }),
+        await testConnectionAction({
+          url: url.trim(),
+          apiKey: apiKey.trim(),
+          token: token.trim(),
+        }),
       );
     } catch {
       setTestResult({
@@ -103,6 +115,7 @@ export function SetupWizard({ initialUrl, encryptsSecrets }: SetupWizardProps) {
               clientSecret: clientSecret.trim(),
             }
           : null,
+      token: token.trim(),
     };
     try {
       // Resolves (with an error) only on failure; success redirects us away.
@@ -147,6 +160,28 @@ export function SetupWizard({ initialUrl, encryptsSecrets }: SetupWizardProps) {
                   title="Connect to Headscale"
                   description="Point Headtower at your control plane, then verify the API key with a live test."
                 />
+
+                {requiresToken && (
+                  <Field
+                    label="Setup token"
+                    htmlFor="setup-token"
+                    description="Required: the value of HEADTOWER_SETUP_TOKEN set on the server."
+                  >
+                    <Input
+                      id="setup-token"
+                      mono
+                      type="password"
+                      value={token}
+                      spellCheck={false}
+                      autoComplete="off"
+                      placeholder="Paste the setup token"
+                      onChange={(e) => {
+                        setToken(e.target.value);
+                        resetTest();
+                      }}
+                    />
+                  </Field>
+                )}
 
                 <Field
                   label="Headscale URL"
@@ -209,7 +244,12 @@ export function SetupWizard({ initialUrl, encryptsSecrets }: SetupWizardProps) {
                   <Button
                     variant="outline"
                     onClick={onTest}
-                    disabled={testing || !url.trim() || !apiKey.trim()}
+                    disabled={
+                      testing ||
+                      !url.trim() ||
+                      !apiKey.trim() ||
+                      (requiresToken && !token.trim())
+                    }
                   >
                     {testing ? (
                       <>

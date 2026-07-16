@@ -36,6 +36,16 @@ function secureCookies(): boolean {
 }
 
 /**
+ * The cookie `path`. Under a sub-path mount (HEADTOWER_BASE_PATH, e.g. "/admin")
+ * scope the session cookie to that mount so it isn't sent to unrelated apps
+ * sharing the same host at other paths. Next does not prepend basePath to an
+ * explicit cookie `path`, so set it by hand. Falls back to "/" at the root.
+ */
+export function cookiePath(): string {
+  return process.env.HEADTOWER_BASE_PATH?.trim() || "/";
+}
+
+/**
  * Create the `app_user` for an OIDC identity, or refresh an existing one.
  *
  * Keyed on the OIDC `sub`. A new account is minted with {@link DEFAULT_ROLE};
@@ -119,7 +129,7 @@ export function sessionCookieOptions(expiresAt: Date) {
     httpOnly: true,
     secure: secureCookies(),
     sameSite: "lax" as const,
-    path: "/",
+    path: cookiePath(),
     expires: expiresAt,
   };
 }
@@ -168,6 +178,25 @@ export const loadSession: () => Promise<LoadedSession | null> = cache(async () =
 });
 
 /**
+ * Lightweight, cookie-free liveness check for a session row by id: true only
+ * when the row still exists and hasn't expired. The proxy gate (the AUTHORITATIVE
+ * boundary that runs before any Server Component fetches data) calls this after
+ * verifying the JWT signature, so a revoked-but-unexpired token (signed out
+ * elsewhere, member removed, session revoked from the account page) is rejected
+ * at the gate instead of only inside `loadSession` at render time. Does not
+ * touch cookies, so it is safe to import into `proxy.ts`.
+ */
+export async function isSessionActive(sessionId: string): Promise<boolean> {
+  const row = await db
+    .select({ expiresAt: session.expiresAt })
+    .from(session)
+    .where(eq(session.id, sessionId))
+    .get();
+  if (!row) return false;
+  return row.expiresAt.getTime() > Date.now();
+}
+
+/**
  * Sign out: delete the current session row (if the cookie names a valid one) and
  * clear the cookie. Safe to call when already signed out.
  */
@@ -180,7 +209,9 @@ export async function endSession(): Promise<void> {
       await db.delete(session).where(eq(session.id, payload.sid));
     }
   }
-  jar.delete(SESSION_COOKIE);
+  // Delete with the same path the cookie was written with, or the browser keeps
+  // the (now-orphaned) cookie under the base-path scope.
+  jar.delete({ name: SESSION_COOKIE, path: cookiePath() });
 }
 
 /** Best-effort prune of every expired session row. Cheap housekeeping. */

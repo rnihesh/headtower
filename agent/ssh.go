@@ -40,40 +40,51 @@ type sshClaims struct {
 	Exp  int64  `json:"exp"`  // expiry, unix seconds
 }
 
-// verifySSHToken parses and authenticates a token of the form
+// wsSubprotocol is the marker WebSocket subprotocol the browser offers alongside
+// the access token, so the token can ride in Sec-WebSocket-Protocol instead of
+// the URL query (keeping it out of proxy access-log request lines).
+const wsSubprotocol = "ht-ssh.v1"
+
+// verifyToken authenticates the envelope
 //
 //	base64url(payloadJSON) + "." + base64url(HMAC_SHA256(payloadJSON, secret))
 //
-// using unpadded (raw) base64url on both segments. The HMAC is computed over the
-// exact payload bytes that were encoded, compared in constant time. It returns
-// the decoded claims only when the signature is valid and the token is unexpired.
-func verifySSHToken(token, secret string) (sshClaims, error) {
-	var claims sshClaims
+// using unpadded (raw) base64url on both segments, with the HMAC computed over
+// the exact payload bytes and compared in constant time. It returns the raw
+// payload bytes for the caller to interpret; it does NOT check any claims.
+func verifyToken(token, secret string) ([]byte, error) {
 	if token == "" {
-		return claims, errors.New("missing token")
+		return nil, errors.New("missing token")
 	}
 	// The token is "<payload>.<signature>"; split on the single separating dot.
 	payloadB64, sigB64, ok := strings.Cut(token, ".")
 	if !ok {
-		return claims, errors.New("malformed token")
+		return nil, errors.New("malformed token")
 	}
-
 	payloadBytes, err := base64.RawURLEncoding.DecodeString(payloadB64)
 	if err != nil {
-		return claims, errors.New("invalid payload encoding")
+		return nil, errors.New("invalid payload encoding")
 	}
 	gotSig, err := base64.RawURLEncoding.DecodeString(sigB64)
 	if err != nil {
-		return claims, errors.New("invalid signature encoding")
+		return nil, errors.New("invalid signature encoding")
 	}
-
 	mac := hmac.New(sha256.New, []byte(secret))
 	mac.Write(payloadBytes)
-	wantSig := mac.Sum(nil)
-	if !hmac.Equal(gotSig, wantSig) {
-		return claims, errors.New("signature mismatch")
+	if !hmac.Equal(gotSig, mac.Sum(nil)) {
+		return nil, errors.New("signature mismatch")
 	}
+	return payloadBytes, nil
+}
 
+// verifySSHToken authenticates an /ssh access token and returns its claims only
+// when the signature is valid, the token is unexpired, and it names a host+user.
+func verifySSHToken(token, secret string) (sshClaims, error) {
+	var claims sshClaims
+	payloadBytes, err := verifyToken(token, secret)
+	if err != nil {
+		return claims, err
+	}
 	if err := json.Unmarshal(payloadBytes, &claims); err != nil {
 		return claims, errors.New("invalid payload json")
 	}
@@ -84,6 +95,41 @@ func verifySSHToken(token, secret string) (sshClaims, error) {
 		return claims, errors.New("token expired")
 	}
 	return claims, nil
+}
+
+// verifyPeersToken authenticates a token minted for the read-only /peers
+// endpoint: a valid signature and validity window, with no host/user. A /peers
+// token therefore can't be replayed against /ssh (which requires host+user).
+func verifyPeersToken(token, secret string) error {
+	payloadBytes, err := verifyToken(token, secret)
+	if err != nil {
+		return err
+	}
+	var claims struct {
+		Exp int64 `json:"exp"`
+	}
+	if err := json.Unmarshal(payloadBytes, &claims); err != nil {
+		return errors.New("invalid payload json")
+	}
+	if claims.Exp <= 0 || time.Now().Unix() > claims.Exp {
+		return errors.New("token expired")
+	}
+	return nil
+}
+
+// sshTokenFromRequest extracts the /ssh access token. The preferred transport is
+// the Sec-WebSocket-Protocol header (the client offers [wsSubprotocol, <token>])
+// so the token never appears in a proxy's logged request line; it falls back to
+// the legacy ?token= query param for older browser clients.
+func sshTokenFromRequest(r *http.Request) string {
+	for _, header := range r.Header.Values("Sec-Websocket-Protocol") {
+		for proto := range strings.SplitSeq(header, ",") {
+			if p := strings.TrimSpace(proto); p != "" && p != wsSubprotocol {
+				return p
+			}
+		}
+	}
+	return r.URL.Query().Get("token")
 }
 
 // handleSSH upgrades GET /ssh to a websocket and bridges it to a Tailscale-SSH
@@ -97,7 +143,7 @@ func handleSSH(t *tailnet, secret string) http.HandlerFunc {
 			return
 		}
 
-		claims, err := verifySSHToken(r.URL.Query().Get("token"), secret)
+		claims, err := verifySSHToken(sshTokenFromRequest(r), secret)
 		if err != nil {
 			writeError(w, http.StatusUnauthorized, "ssh token rejected: "+err.Error())
 			return
@@ -108,6 +154,10 @@ func handleSSH(t *tailnet, secret string) http.HandlerFunc {
 			// service reached by the Headtower app (often via a proxy), so the
 			// browser Origin will not match the agent host. Skip origin checks.
 			InsecureSkipVerify: true,
+			// Negotiate the marker subprotocol the client offers so the token can
+			// travel in Sec-WebSocket-Protocol (see sshTokenFromRequest). The
+			// token is the other offered protocol and isn't selected here.
+			Subprotocols: []string{wsSubprotocol},
 		})
 		if err != nil {
 			// Accept already wrote an HTTP error response on failure.

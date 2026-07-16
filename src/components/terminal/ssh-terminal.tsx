@@ -52,11 +52,16 @@ export interface SshTerminalProps {
   className?: string;
 }
 
-/** `${wss|ws}://${host}${path}?token=...` - the agent websocket, reached
- *  through the app's own origin (nginx proxies the base-path `path`). */
-function wsUrl(path: string, token: string): string {
+/** Marker subprotocol paired with the access token, so the token rides in
+ *  Sec-WebSocket-Protocol rather than the URL (must match agent/ssh.go). */
+const WS_SUBPROTOCOL = "ht-ssh.v1";
+
+/** `${wss|ws}://${host}${path}` - the agent websocket, reached through the app's
+ *  own origin (nginx proxies the base-path `path`). The access token is NOT in
+ *  the URL (a proxy would log it); it travels as a WebSocket subprotocol. */
+function wsUrl(path: string): string {
   const protocol = window.location.protocol === "https:" ? "wss" : "ws";
-  return `${protocol}://${window.location.host}${path}?token=${encodeURIComponent(token)}`;
+  return `${protocol}://${window.location.host}${path}`;
 }
 
 interface AgentTextMessage {
@@ -143,7 +148,9 @@ export function SshTerminal({
         return;
       }
 
-      const ws = new WebSocket(wsUrl(result.path, result.token));
+      // The token travels as the second offered subprotocol (the agent reads it
+      // from Sec-WebSocket-Protocol and negotiates the marker back).
+      const ws = new WebSocket(wsUrl(result.path), [WS_SUBPROTOCOL, result.token]);
       ws.binaryType = "arraybuffer";
       socket = ws;
 

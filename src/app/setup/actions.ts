@@ -11,6 +11,14 @@
  *   completeSetupAction    validate + persist the whole connection via setConfig,
  *                          then send the operator into the console
  *
+ * Both actions are reachable without a session (the console has none yet during
+ * first-run and /setup is proxy-exempt), so on a deployment that will be exposed
+ * to an untrusted network before it is configured, set HEADTOWER_SETUP_TOKEN to
+ * a random string: both actions then require it, closing the window in which an
+ * anonymous caller could re-point the instance or use the probe for SSRF. When
+ * the env var is unset the behaviour is unchanged (whoever reaches an
+ * unconfigured instance first configures it, and it self-closes once set).
+ *
  * Persistence is atomic on finish: the wizard collects everything client-side and
  * only writes once, so a half-finished wizard never leaves a partial config.
  */
@@ -28,10 +36,31 @@ import {
   sessionSecretState,
 } from "@/app/(app)/settings/authentication/session-secret";
 
+/**
+ * True when no HEADTOWER_SETUP_TOKEN is configured, or the caller supplied the
+ * matching one. Compared with a length-safe equality so a mismatch can't be
+ * timed. When set, an unset/wrong token blocks the setup actions.
+ */
+function setupTokenOk(provided: string | undefined): boolean {
+  const required = process.env.HEADTOWER_SETUP_TOKEN?.trim();
+  if (!required) return true;
+  const got = (provided ?? "").trim();
+  if (got.length !== required.length) return false;
+  let diff = 0;
+  for (let i = 0; i < required.length; i++) {
+    diff |= required.charCodeAt(i) ^ got.charCodeAt(i);
+  }
+  return diff === 0;
+}
+
+const SETUP_TOKEN_REJECTED =
+  "This instance requires a setup token. Enter the value of HEADTOWER_SETUP_TOKEN.";
+
 /** Live-probe a candidate connection. Refused once the app is already set up. */
 export async function testConnectionAction(input: {
   url: string;
   apiKey: string;
+  token?: string;
 }): Promise<ConnectionTestResult> {
   if (getConfig().headscale) {
     return {
@@ -40,6 +69,9 @@ export async function testConnectionAction(input: {
       message: "Headtower is already configured.",
     };
   }
+  if (!setupTokenOk(input.token)) {
+    return { ok: false, status: "error", message: SETUP_TOKEN_REJECTED };
+  }
   return testHeadscaleConnection(input.url, input.apiKey);
 }
 
@@ -47,6 +79,8 @@ export interface CompleteSetupInput {
   headscale: { url: string; apiKey: string };
   /** OIDC provider, or null for operator (API-key) mode. */
   oidc: { issuer: string; clientId: string; clientSecret: string } | null;
+  /** Setup token, required only when HEADTOWER_SETUP_TOKEN is configured. */
+  token?: string;
 }
 
 export type CompleteSetupResult = { ok: false; error: string };
@@ -61,6 +95,10 @@ export async function completeSetupAction(
 ): Promise<CompleteSetupResult> {
   // Already configured: nothing to persist; just enter the console.
   if (getConfig().headscale) redirect("/");
+
+  if (!setupTokenOk(input.token)) {
+    return { ok: false, error: SETUP_TOKEN_REJECTED };
+  }
 
   // Mirror the Authentication view's guard: OIDC sign-in signs its session
   // cookie with HEADTOWER_SESSION_SECRET, which proxy.ts verifies before any DB

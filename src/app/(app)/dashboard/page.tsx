@@ -46,7 +46,7 @@ import { Chip } from "@/components/ui/chip";
 import { StatusDot } from "@/components/ui/status-dot";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { EmptyState } from "@/components/ui/empty-state";
-import { captureTailnetSnapshot, type SnapshotPoint } from "./actions";
+import { captureTailnetSnapshot, type SnapshotPoint } from "./snapshots";
 
 // The dashboard reads live tailnet state on every request; never prerender it.
 export const dynamic = "force-dynamic";

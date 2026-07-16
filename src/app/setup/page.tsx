@@ -14,5 +14,15 @@ export const metadata = {
 export default function SetupPage() {
   const initialUrl = process.env.HEADSCALE_URL?.trim() ?? "";
   const encryptsSecrets = Boolean(process.env.HEADTOWER_SECRET?.trim());
-  return <SetupWizard initialUrl={initialUrl} encryptsSecrets={encryptsSecrets} />;
+  // When HEADTOWER_SETUP_TOKEN is set, the setup actions require it - so the
+  // wizard must collect it. The token itself never leaves the server; only this
+  // boolean does.
+  const requiresToken = Boolean(process.env.HEADTOWER_SETUP_TOKEN?.trim());
+  return (
+    <SetupWizard
+      initialUrl={initialUrl}
+      encryptsSecrets={encryptsSecrets}
+      requiresToken={requiresToken}
+    />
+  );
 }

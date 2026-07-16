@@ -34,7 +34,8 @@
  */
 
 import { NextResponse, type NextRequest } from "next/server";
-import { isOidcEnabled } from "@/lib/auth/oidc";
+import { isOidcEnabledStrict } from "@/lib/auth/oidc";
+import { isSessionActive } from "@/lib/auth/session";
 import { SESSION_COOKIE, verifySessionToken } from "@/lib/auth/session-token";
 
 /**
@@ -48,17 +49,40 @@ import { SESSION_COOKIE, verifySessionToken } from "@/lib/auth/session-token";
 const PUBLIC_PREFIXES = ["/login", "/setup", "/icon", "/apple-icon"];
 
 export async function proxy(request: NextRequest): Promise<NextResponse> {
-  // Operator mode: no sessions, nothing to gate.
-  if (!isOidcEnabled()) return NextResponse.next();
+  // Determine the auth mode. Operator mode (no OIDC) has no sessions to gate.
+  // Use the strict check and fail CLOSED if it throws: the dangerous direction
+  // is serving the admin console unauthenticated because a transient store read
+  // failed, so treat "can't determine" as "gated" and require a session below.
+  let gated: boolean;
+  try {
+    gated = isOidcEnabledStrict();
+  } catch {
+    gated = true;
+  }
+  if (!gated) return NextResponse.next();
 
   const { pathname } = request.nextUrl;
   if (PUBLIC_PREFIXES.some((p) => pathname === p || pathname.startsWith(p + "/"))) {
     return NextResponse.next();
   }
 
+  // Two checks, both required: the JWT must verify (signature + expiry) AND the
+  // named session row must still exist and be unexpired. The row check makes
+  // this the authoritative revocation point - a validly-signed but revoked
+  // token (signed out elsewhere, member removed, session revoked) is turned
+  // away here, before any route segment fetches tailnet data. A store read
+  // error fails closed (treated as no session).
   const token = request.cookies.get(SESSION_COOKIE)?.value;
   const payload = token ? await verifySessionToken(token) : null;
-  if (payload) return NextResponse.next();
+  if (payload) {
+    let active = false;
+    try {
+      active = await isSessionActive(payload.sid);
+    } catch {
+      active = false;
+    }
+    if (active) return NextResponse.next();
+  }
 
   // No valid session: send to /login, remembering where they were headed.
   // Next strips the configured basePath (HEADTOWER_BASE_PATH, e.g. /admin) from
