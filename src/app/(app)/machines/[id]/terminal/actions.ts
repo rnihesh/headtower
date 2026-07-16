@@ -24,8 +24,8 @@
  * nothing about whether the shell actually connects, or when it ends.
  */
 
-import { createHmac } from "node:crypto";
 import { audit, authorize, actorLabel } from "@/lib/authz";
+import { mintAgentToken } from "@/lib/agent/token";
 import { recordSshSession } from "@/lib/ssh-sessions";
 
 /** Token validity window. Long enough to open the socket, short enough to
@@ -68,14 +68,11 @@ export async function mintSshToken(
     };
   }
 
-  const payload = JSON.stringify({
+  const token = mintAgentToken(secret, {
     host: trimmedHost,
     user: trimmedUser,
     exp: Math.floor(Date.now() / 1000) + TOKEN_TTL_SECONDS,
   });
-  const payloadBytes = Buffer.from(payload, "utf8");
-  const signature = createHmac("sha256", secret).update(payloadBytes).digest();
-  const token = `${payloadBytes.toString("base64url")}.${signature.toString("base64url")}`;
 
   // targetId is intentionally omitted: `host` is a hostname/tailnet IP, not
   // the Headscale node id, so recording it there would produce a broken

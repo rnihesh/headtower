@@ -15,7 +15,7 @@ const (
 	envStateDir    = "HEADTOWER_AGENT_STATE_DIR"    // tsnet state directory
 	envEphemeral   = "HEADTOWER_AGENT_EPHEMERAL"    // register as an ephemeral node
 	envVerbose     = "HEADTOWER_AGENT_VERBOSE"      // emit verbose tsnet backend logs
-	envSSHSecret   = "HEADTOWER_AGENT_SSH_SECRET"   // HMAC secret enabling the /ssh bridge
+	envSSHSecret   = "HEADTOWER_AGENT_SSH_SECRET"   // HMAC secret for /ssh tokens; also gates /peers when set
 )
 
 const (
@@ -32,7 +32,7 @@ type config struct {
 	StateDir   string // tsnet state dir; empty lets tsnet pick one
 	Ephemeral  bool   // whether to register as an ephemeral node
 	Verbose    bool   // whether to print verbose backend logs
-	SSHSecret  string // HMAC secret for /ssh tokens; empty disables the bridge
+	SSHSecret  string // HMAC secret for /ssh tokens (also gates /peers); empty disables the bridge and leaves /peers open
 }
 
 // loadConfig reads configuration from the environment, applying defaults.

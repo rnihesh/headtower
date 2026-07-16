@@ -17,6 +17,21 @@
 
 import { sqlite } from "./client";
 
+/**
+ * Probe that the settings store is actually readable, throwing on any failure.
+ * Unlike {@link readSetting} / {@link readAllSettings} - which deliberately
+ * swallow errors and return "no settings" so the config layer can fall back to
+ * the env bootstrap - this propagates the error. Callers that must FAIL CLOSED
+ * on a store outage (the proxy auth gate via
+ * {@link import("@/lib/auth/oidc").isOidcEnabledStrict}) use it to tell "store
+ * unreadable" apart from "store readable but nothing stored"; without it, a
+ * locked/corrupt/permission-denied DB would masquerade as "OIDC disabled" and
+ * open the console unauthenticated.
+ */
+export function assertSettingsStoreReadable(): void {
+  sqlite.prepare("SELECT 1 FROM app_settings LIMIT 1").get();
+}
+
 /** Read a single setting's raw stored value, or null when absent/unavailable. */
 export function readSetting(key: string): string | null {
   try {

@@ -150,8 +150,15 @@ function blockedProbeHost(url: string): string | null {
   }
   // Lowercase and strip IPv6 literal brackets for comparison.
   const h = host.toLowerCase().replace(/^\[/, "").replace(/\]$/, "");
-  // IPv4 link-local (169.254.0.0/16), which includes the cloud metadata IP.
-  if (/^169\.254\.\d{1,3}\.\d{1,3}$/.test(h)) {
+  // IPv4 link-local (169.254.0.0/16), which includes the cloud metadata IP -
+  // both as a bare IPv4 literal and as an IPv4-mapped IPv6 literal, whose
+  // canonical WHATWG form for 169.254.x.x is `::ffff:a9fe:xxxx` (a9fe = 169.254)
+  // but which some inputs keep in dotted form (`::ffff:169.254.x.x`). Match all.
+  if (
+    /^169\.254\.\d{1,3}\.\d{1,3}$/.test(h) ||
+    /^::ffff:a9fe:[0-9a-f]{1,4}$/.test(h) ||
+    /^::ffff:169\.254\.\d{1,3}\.\d{1,3}$/.test(h)
+  ) {
     return "That is a link-local address (169.254.x.x); it can't be a Headscale control plane.";
   }
   // IPv6 link-local (fe80::/10) and the AWS IMDSv6 metadata address.
@@ -499,7 +506,21 @@ export async function testHeadscaleConnection(
       headers: { Authorization: `Bearer ${apiKey}`, Accept: "application/json" },
       cache: "no-store",
       signal: controller.signal,
+      // Do not follow redirects: a 3xx could otherwise bounce this server-side
+      // probe from an allowed host to a blocked one (e.g. the metadata IP),
+      // defeating blockedProbeHost. A real control plane answers /api/v1/apikey
+      // directly; a redirect means the operator gave a non-canonical URL.
+      redirect: "manual",
     });
+
+    if (response.status >= 300 && response.status < 400) {
+      return {
+        ok: false,
+        status: "error",
+        message: `Reached ${host}, but it redirected (HTTP ${response.status}). Enter the control plane's canonical URL (no redirect).`,
+        httpStatus: response.status,
+      };
+    }
 
     if (response.ok) {
       return {

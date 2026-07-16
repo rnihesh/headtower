@@ -98,18 +98,25 @@ func verifySSHToken(token, secret string) (sshClaims, error) {
 }
 
 // verifyPeersToken authenticates a token minted for the read-only /peers
-// endpoint: a valid signature and validity window, with no host/user. A /peers
-// token therefore can't be replayed against /ssh (which requires host+user).
+// endpoint: a valid signature, an `aud` of "peers", and an unexpired window. The
+// audience check makes the two token types mutually non-interchangeable: an
+// /ssh token (aud absent, host+user present) is rejected here, and a /peers
+// token (no host/user) is rejected by verifySSHToken - neither can stand in for
+// the other.
 func verifyPeersToken(token, secret string) error {
 	payloadBytes, err := verifyToken(token, secret)
 	if err != nil {
 		return err
 	}
 	var claims struct {
-		Exp int64 `json:"exp"`
+		Aud string `json:"aud"`
+		Exp int64  `json:"exp"`
 	}
 	if err := json.Unmarshal(payloadBytes, &claims); err != nil {
 		return errors.New("invalid payload json")
+	}
+	if claims.Aud != "peers" {
+		return errors.New("token not scoped for peers")
 	}
 	if claims.Exp <= 0 || time.Now().Unix() > claims.Exp {
 		return errors.New("token expired")

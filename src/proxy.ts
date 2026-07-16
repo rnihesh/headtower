@@ -5,9 +5,10 @@
  * the request boundary that runs before the app. This is the AUTHORITATIVE
  * gate: when single sign-on is on (any identity provider enabled - the legacy
  * single-provider slot or any `oidc_provider` row, see
- * `@/lib/auth/oidc`'s {@link isOidcEnabled}) and a request for an app route
- * arrives without a validly-signed `ht_session` cookie, it redirects to
- * `/login` BEFORE any Server Component starts rendering.
+ * `@/lib/auth/oidc`'s {@link isOidcEnabledStrict}) and a request for an app
+ * route arrives without both a validly-signed `ht_session` cookie AND a live
+ * backing session row (see {@link isSessionActive}), it redirects to `/login`
+ * BEFORE any Server Component starts rendering.
  *
  * That "before rendering starts" property is load-bearing, not a style choice:
  * a redirect() call inside a layout Server Component (e.g. the app shell) does
@@ -23,9 +24,12 @@
  * read the same synchronous, `node:sqlite`-backed config/provider store every
  * other server module uses - no separate env-only approximation needed here.
  *
- * `getSession()` (used inside Server Components and Server Actions) remains
- * the second, secure check: it additionally validates the session row still
- * exists (e.g. wasn't revoked from Settings > Members or the account page).
+ * The gate now performs the revocation check itself ({@link isSessionActive}
+ * confirms the row still exists and is unexpired), so a signed-out / removed /
+ * revoked session is turned away here, before any route data is fetched.
+ * `getSession()` (used inside Server Components and Server Actions) repeats the
+ * same row check as defense-in-depth for direct action/component invocation and
+ * to load the account + role.
  *
  * The NEEDS-SETUP gate (redirect to /setup when no Headscale connection is
  * configured) stays in the app-shell, not here - /setup must stay reachable

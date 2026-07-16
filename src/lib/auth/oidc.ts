@@ -36,6 +36,7 @@
 import * as client from "openid-client";
 import { cookies } from "next/headers";
 import { getConfig, type OidcConfig } from "@/lib/config";
+import { assertSettingsStoreReadable } from "@/lib/db";
 import { cookiePath } from "./session";
 import {
   getProviderSecrets,
@@ -122,13 +123,20 @@ export function isOidcEnabled(): boolean {
 }
 
 /**
- * Like {@link isOidcEnabled} but does NOT swallow errors. The proxy gate uses
- * this so a transient config-store read failure can't be silently misread as
- * "auth disabled" (which would open the console unauthenticated); it catches and
- * fails closed instead. Everywhere else, {@link isOidcEnabled}'s "bad config =
- * disabled" behaviour is the right one.
+ * Like {@link isOidcEnabled} but does NOT swallow a store-read failure. The
+ * proxy gate uses this so a config-store outage can't be silently misread as
+ * "auth disabled" (which would open the console unauthenticated); it throws so
+ * the caller fails closed instead. Everywhere else, {@link isOidcEnabled}'s "bad
+ * config = disabled" behaviour is the right one.
+ *
+ * The probe is load-bearing: `getConfig()` and `hasEnabledProvider()` both
+ * swallow DB errors internally (returning "no config"), so calling them alone
+ * could NOT distinguish a genuine outage from an unconfigured instance. The
+ * explicit {@link assertSettingsStoreReadable} probe re-throws on an unreadable
+ * store before those swallowing reads run.
  */
 export function isOidcEnabledStrict(): boolean {
+  assertSettingsStoreReadable();
   return getConfig().oidc !== null || hasEnabledProvider();
 }
 

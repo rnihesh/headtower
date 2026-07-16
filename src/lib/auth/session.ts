@@ -210,8 +210,12 @@ export async function endSession(): Promise<void> {
     }
   }
   // Delete with the same path the cookie was written with, or the browser keeps
-  // the (now-orphaned) cookie under the base-path scope.
-  jar.delete({ name: SESSION_COOKIE, path: cookiePath() });
+  // the (now-orphaned) cookie under the base-path scope. Also clear a cookie at
+  // "/" so an instance upgraded from a pre-base-path-scoping build (which always
+  // wrote path "/") doesn't leave a stale cookie behind on the first logout.
+  const path = cookiePath();
+  jar.delete({ name: SESSION_COOKIE, path });
+  if (path !== "/") jar.delete({ name: SESSION_COOKIE, path: "/" });
 }
 
 /** Best-effort prune of every expired session row. Cheap housekeeping. */

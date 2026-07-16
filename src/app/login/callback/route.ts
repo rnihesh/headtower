@@ -110,11 +110,13 @@ function appUrl(origin: string, path: string): URL {
 }
 
 /** Expire the login-transaction cookies on the outgoing response. Delete under
- *  the same base-path scope they were set with, or the browser keeps them. */
+ *  the same base-path scope they were set with, plus "/" so a login begun on a
+ *  pre-base-path-scoping build (cookies at "/") is still cleared after upgrade. */
 function clearTransaction(response: NextResponse): NextResponse {
   const path = cookiePath();
   for (const name of LOGIN_TRANSACTION_COOKIES) {
     response.cookies.delete({ name, path });
+    if (path !== "/") response.cookies.delete({ name, path: "/" });
   }
   return response;
 }

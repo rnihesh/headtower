@@ -38,7 +38,7 @@ All configuration is via environment variables.
 | `HEADTOWER_AGENT_STATE_DIR`    | no       | OS config dir      | Directory for tsnet node state. |
 | `HEADTOWER_AGENT_EPHEMERAL`    | no       | `false`            | Register as an ephemeral node (auto-removed when it goes offline). |
 | `HEADTOWER_AGENT_VERBOSE`      | no       | `false`            | Emit verbose tsnet backend logs for debugging. |
-| `HEADTOWER_AGENT_SSH_SECRET`   | no       | -                  | Shared HMAC secret that signs `/ssh` access tokens. **Unset disables `/ssh` (returns 503).** Set the same value in the Headtower app. |
+| `HEADTOWER_AGENT_SSH_SECRET`   | no       | -                  | Shared HMAC secret that authenticates `/ssh` access tokens and, when set, `/peers` bearer tokens. **Unset disables `/ssh` (returns 503) and leaves `/peers` open.** Set the same value in the Headtower app. |
 
 ## Build
 
@@ -81,6 +81,12 @@ requests and leaves the tailnet cleanly.
 Returns this node (`self`) and every peer it can see. `lastSeen` is only present
 when the control plane reports a node as offline. `tailscaleVersion` is resolved
 best-effort and may be empty for some peers.
+
+When `HEADTOWER_AGENT_SSH_SECRET` is set, this endpoint requires an
+`Authorization: Bearer <token>` header (the app mints a short-lived token with
+`aud: "peers"`); with no secret configured it is open. This keeps the mesh
+topology from being read by anyone who can reach the agent's port directly - set
+the secret whenever a reverse proxy might expose the agent beyond `/ssh`.
 
 ```json
 {
@@ -147,8 +153,10 @@ boundary, not SSH host-key pinning.
 
 #### Access token
 
-Auth is a signed token passed as the `?token=` query parameter on the upgrade
-request. It is HMAC-SHA256 over a small JSON payload, shared with the app via
+Auth is a signed token. The browser offers it as the second `Sec-WebSocket-Protocol`
+value on the upgrade request (`ht-ssh.v1, <token>`), so it never lands in a proxy
+access-log request line; a legacy `?token=` query parameter is still accepted as
+a fallback. It is HMAC-SHA256 over a small JSON payload, shared with the app via
 `HEADTOWER_AGENT_SSH_SECRET`.
 
 ```

@@ -14,6 +14,7 @@
 export { db, sqlite } from "./client";
 
 export {
+  assertSettingsStoreReadable,
   readSetting,
   readAllSettings,
   writeSetting,
