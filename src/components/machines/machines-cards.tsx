@@ -216,8 +216,8 @@ function HostCard({
           canManage && "pl-9",
         )}
       >
-        {/* Identity: status dot + name, with agent OS / version to the right. */}
-        <div className="flex items-start justify-between gap-2">
+        {/* Identity: status dot + name, hostname and agent OS / version below. */}
+        <div className="flex items-start gap-2">
           <div className="flex min-w-0 items-start gap-2">
             <StatusDot
               status={dot.status}
@@ -233,21 +233,21 @@ function HostCard({
                   {node.hostname}
                 </div>
               )}
-            </div>
-          </div>
-          {(os || version) && (
-            <div className="shrink-0 text-right" title="Reported by agent">
-              {os && <div className="text-xs text-ink-muted">{os}</div>}
-              {version && (
+              {(os || version) && (
                 <div
-                  className="data text-[11px] text-ink-faint"
-                  title={node.agent?.clientVersion ?? undefined}
+                  className="truncate text-xs text-ink-muted"
+                  title={
+                    [os, node.agent?.clientVersion].filter(Boolean).join(" · ") ||
+                    undefined
+                  }
                 >
-                  {version}
+                  {os}
+                  {os && version && " · "}
+                  {version && <span className="data">{version}</span>}
                 </div>
               )}
             </div>
-          )}
+          </div>
         </div>
 
         {/* Primary address (mono readout). */}
@@ -401,9 +401,8 @@ function HostCard({
 
       {canManage && (
         // Top-right control cluster: a hover/focus-revealed quick-action pair
-        // (open terminal, copy IP) sits just left of the kebab. Each carries its
-        // own translucent backdrop so it stays legible over the card's OS/version
-        // readout, mirroring the kebab's resting calm.
+        // (open terminal, copy IP) sits just left of the kebab. OS/version live
+        // under the name, so nothing renders beneath this cluster.
         <div className="absolute right-2.5 top-2.5 flex items-center gap-0.5">
           <RowQuickActions
             node={node}
