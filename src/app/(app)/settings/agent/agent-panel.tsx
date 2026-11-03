@@ -261,7 +261,7 @@ export function AgentPanel({
                   setChangingSecret(true);
                   invalidate();
                 }}
-                className="inline-flex items-center gap-1.5 text-xs font-medium text-beacon-500 transition-colors hover:text-beacon-400"
+                className="inline-flex items-center gap-1.5 text-xs font-medium text-ink underline decoration-line-strong underline-offset-4 transition-colors hover:decoration-ink"
               >
                 <Pencil className="h-3.5 w-3.5" aria-hidden />
                 Change secret
@@ -419,7 +419,7 @@ function ChoiceCard({
       <span
         className={cn(
           "ml-auto mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full border",
-          selected ? "border-beacon-500 bg-beacon-500 text-graphite-950" : "border-line-strong",
+          selected ? "border-beacon-500 bg-beacon-500 text-on-beacon" : "border-line-strong",
         )}
       >
         {selected && <Check className="h-3 w-3" aria-hidden />}

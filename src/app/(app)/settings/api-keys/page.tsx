@@ -153,7 +153,7 @@ function ApiKeyRow({
           {canManage ? (
             <ApiKeyActions prefix={entry.prefix} expired={expired} isSelf={current} />
           ) : (
-            <span className="pr-1 text-xs text-ink-faint">—</span>
+            <span className="pr-1 text-xs text-ink-faint">-</span>
           )}
         </div>
       </Td>

@@ -115,7 +115,7 @@ export function AuthenticationForm({
           No identity provider is configured yet.{" "}
           <Link
             href="/settings/identity-providers"
-            className="font-medium text-beacon-500 transition-colors hover:text-beacon-400"
+            className="font-medium text-ink underline decoration-line-strong underline-offset-4 transition-colors hover:decoration-ink"
           >
             Add one
           </Link>{" "}
@@ -257,7 +257,7 @@ function ChoiceCard({
       <span
         className={cn(
           "ml-auto mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full border",
-          selected ? "border-beacon-500 bg-beacon-500 text-graphite-950" : "border-line-strong",
+          selected ? "border-beacon-500 bg-beacon-500 text-on-beacon" : "border-line-strong",
         )}
       >
         {selected && <Check className="h-3 w-3" aria-hidden />}

@@ -107,7 +107,7 @@ function FilterSelect({ label, value, placeholder, options, onChange }: FilterSe
     <div className="flex min-w-[10rem] flex-col gap-1.5">
       <label
         htmlFor={id}
-        className="text-[11px] font-medium uppercase tracking-[0.08em] text-ink-muted"
+        className="text-xs font-medium text-ink-muted"
       >
         {label}
       </label>

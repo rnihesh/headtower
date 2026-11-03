@@ -124,7 +124,7 @@ export function SettingsNav() {
     >
       {GROUPS.map((group) => (
         <div key={group.label} className="flex shrink-0 gap-1 lg:flex-col lg:gap-1">
-          <span className="hidden px-3 pb-1 text-[10px] font-medium uppercase tracking-[0.14em] text-ink-faint lg:block">
+          <span className="hidden px-3 pb-1 text-xs font-medium text-ink-faint lg:block">
             {group.label}
           </span>
           {group.items.map((item) => {

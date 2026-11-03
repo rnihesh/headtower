@@ -1,10 +1,10 @@
 "use client";
 
 /**
- * LineChart — a time-series instrument: hairline axes, faint gridlines, one or
+ * LineChart: a time-series instrument: hairline axes, faint gridlines, one or
  * more hairline series, and a pointer-driven crosshair + tooltip that reads the
  * value at the nearest sample. Series share the `x` axis (aligned samples). The
- * only client component in the kit — everything else renders on the server.
+ * only client component in the kit; everything else renders on the server.
  */
 import * as React from "react";
 import { cn } from "@/lib/cn";
@@ -234,10 +234,10 @@ export function LineChart({
         )}
       </svg>
 
-      {/* tooltip — HTML overlay positioned by the sample's x fraction */}
+      {/* tooltip: HTML overlay positioned by the sample's x fraction */}
       {hi != null && (
         <div
-          className="pointer-events-none absolute top-2 z-10 min-w-28 -translate-x-1/2 rounded-control border border-line-strong bg-surface-2 px-2 py-1.5 shadow-lg shadow-graphite-950/30"
+          className="pointer-events-none absolute top-2 z-10 min-w-28 -translate-x-1/2 rounded-control border border-line-strong bg-surface-2 px-2 py-1.5 shadow-lg shadow-black/10"
           style={{
             left: `${clamp(tipFrac * 100, 12, 88)}%`,
           }}

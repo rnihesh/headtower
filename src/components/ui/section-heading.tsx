@@ -3,7 +3,10 @@ import { cn } from "@/lib/cn";
 
 export interface SectionHeadingProps {
   title: React.ReactNode;
-  /** Mono micro-label above the title — the one place the accent leads. */
+  /**
+   * Kept for API compatibility; no longer rendered. The page title already
+   * says where you are, so a second label above it was noise.
+   */
   eyebrow?: React.ReactNode;
   description?: React.ReactNode;
   /** Right-aligned actions (buttons, filters). */
@@ -13,7 +16,6 @@ export interface SectionHeadingProps {
 
 export function SectionHeading({
   title,
-  eyebrow,
   description,
   children,
   className,
@@ -23,14 +25,9 @@ export function SectionHeading({
       className={cn("flex flex-wrap items-end justify-between gap-4", className)}
     >
       <div className="flex flex-col gap-1">
-        {eyebrow != null && (
-          <span className="data text-[11px] uppercase tracking-[0.12em] text-beacon-500">
-            {eyebrow}
-          </span>
-        )}
-        <h1 className="text-lg font-semibold tracking-tight text-ink">{title}</h1>
+        <h1 className="text-xl font-semibold tracking-tight text-ink">{title}</h1>
         {description != null && (
-          <p className="text-sm text-ink-muted">{description}</p>
+          <p className="max-w-prose text-sm text-ink-muted">{description}</p>
         )}
       </div>
       {children != null && (

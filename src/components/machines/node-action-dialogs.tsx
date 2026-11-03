@@ -372,7 +372,7 @@ function TagsForm({
           </Field>
           {suggestions.length > 0 && (
             <div className="flex flex-col gap-1.5">
-              <span className="text-[11px] font-medium uppercase tracking-[0.08em] text-ink-faint">
+              <span className="text-xs font-medium text-ink-faint">
                 Suggested
               </span>
               <div className="flex flex-wrap gap-1.5">

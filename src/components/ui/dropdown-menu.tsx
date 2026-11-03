@@ -20,7 +20,7 @@ export function DropdownMenuContent({
         sideOffset={sideOffset}
         align={align}
         className={cn(
-          "z-50 min-w-44 overflow-hidden rounded-card border border-line-strong bg-surface p-1 shadow-xl shadow-graphite-950/30",
+          "z-50 min-w-44 overflow-hidden rounded-card border border-line-strong bg-surface p-1 shadow-lg shadow-black/10",
           className,
         )}
         {...props}
@@ -60,7 +60,7 @@ export function DropdownMenuLabel({
   return (
     <DropdownMenuPrimitive.Label
       className={cn(
-        "px-2 py-1.5 text-[11px] font-medium uppercase tracking-[0.08em] text-ink-faint",
+        "px-2 py-1.5 text-xs font-medium text-ink-faint",
         className,
       )}
       {...props}

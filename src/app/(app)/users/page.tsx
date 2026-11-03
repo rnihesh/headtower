@@ -46,8 +46,8 @@ async function loadUsers(): Promise<UsersData> {
   // because the node read failed. Null signals "unavailable" to the table.
   let nodeCounts: Map<string, number> | null = null;
   try {
-    // The agent's own tailnet node is infrastructure, not a user's device —
-    // exclude it from per-user tallies.
+    // The agent's own tailnet node is infrastructure, not a user's device,
+    // so exclude it from per-user tallies.
     const nodeList = withoutAgentNodes(await nodes.list());
     nodeCounts = new Map();
     for (const node of nodeList) {
@@ -237,7 +237,7 @@ function UserRow({
           <div className="flex min-w-0 flex-col leading-tight">
             <Link
               href={`/users/${user.id}`}
-              className="truncate font-medium text-ink transition-colors hover:text-beacon-500"
+              className="truncate font-medium text-ink underline-offset-4 hover:underline"
             >
               {displayName}
             </Link>
@@ -260,7 +260,7 @@ function UserRow({
           // list; the `user` param is honoured by a later wave.
           <Link
             href={`/machines?user=${encodeURIComponent(user.name)}`}
-            className="transition-colors hover:text-beacon-500"
+            className="transition-colors hover:text-ink"
           >
             {nodeCount && nodeCount > 0 ? (
               nodeCount
@@ -370,7 +370,7 @@ function UserCard({
           <div className="flex min-w-0 flex-col leading-tight">
             <Link
               href={`/users/${user.id}`}
-              className="truncate font-medium text-ink transition-colors hover:text-beacon-500"
+              className="truncate font-medium text-ink underline-offset-4 hover:underline"
             >
               {displayName}
             </Link>
@@ -387,7 +387,7 @@ function UserCard({
               ) : (
                 <Link
                   href={`/machines?user=${encodeURIComponent(user.name)}`}
-                  className="transition-colors hover:text-beacon-500"
+                  className="transition-colors hover:text-ink"
                 >
                   {nodeCount && nodeCount > 0 ? (
                     nodeCount
@@ -459,7 +459,7 @@ function ErrorPanel({ message }: { message: string }) {
       action={
         <Link
           href="/users"
-          className="text-xs font-medium text-beacon-500 transition-colors hover:text-beacon-400"
+          className="text-xs font-medium text-ink underline decoration-line-strong underline-offset-4 transition-colors hover:decoration-ink"
         >
           Retry
         </Link>

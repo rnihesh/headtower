@@ -52,21 +52,21 @@ export default async function MachinesPage() {
   try {
     // Agent enrichment is best-effort and fails quiet, so fetch it alongside the
     // node list; an absent sidecar just yields an empty index. The user list
-    // rides along too — it's the same connection, and it's what the Add device
+    // rides along too: it's the same connection, and it's what the Add device
     // dialog needs to offer an owner.
     const [rawList, agents, allUsers] = await Promise.all([
       nodesApi.list(),
       getAgentPeers(),
       usersApi.list(),
     ]);
-    // The agent's own tailnet node is infrastructure, not a device — hide it.
+    // The agent's own tailnet node is infrastructure, not a device, so hide it.
     const list = withoutAgentNodes(rawList);
     views = list
       .map((node) =>
         toNodeView(node, now, agents.lookup(node.name, node.ipAddresses ?? [])),
       )
       .sort((a, b) => {
-        // Online first, then by name — the operator's reading order.
+        // Online first, then by name: the operator's reading order.
         if (a.online !== b.online) return a.online ? -1 : 1;
         return a.name.localeCompare(b.name);
       });

@@ -1,5 +1,5 @@
 /**
- * Timeline — events plotted on a horizontal time axis (e.g. key expiries,
+ * Timeline: events plotted on a horizontal time axis (e.g. key expiries,
  * registrations). Each event is a stem + dot off a hairline axis, labels
  * alternating above/below to reduce collisions, with date ticks along the
  * bottom and an optional "now" marker. Pure SVG, server-renderable, tokens

@@ -22,6 +22,7 @@ import {
   nodeDot,
   reachabilitySeries,
   type NodeView,
+  shortClientVersion,
 } from "@/lib/machines";
 
 /** Hard ceiling on a selection, matching the bulk Server Actions. */
@@ -116,7 +117,7 @@ export function MachinesCards({
           <button
             type="button"
             onClick={clear}
-            className="mt-1 text-xs text-beacon-500 hover:underline"
+            className="mt-1 text-xs text-ink underline decoration-line-strong underline-offset-4 hover:decoration-ink"
           >
             Reset filters
           </button>
@@ -181,7 +182,7 @@ function HostCard({
   const extraTags = node.tags.length - visibleTags.length;
 
   const os = agentOsLabel(node.agent);
-  const version = node.agent?.clientVersion ?? null;
+  const version = shortClientVersion(node.agent?.clientVersion);
 
   const primaryAddr = node.ipv4 ?? node.ipv6;
   const secondaryAddr = node.ipv4 && node.ipv6 ? node.ipv6 : null;
@@ -224,7 +225,7 @@ function HostCard({
               className="mt-1"
             />
             <div className="min-w-0">
-              <div className="truncate font-medium text-ink group-hover:text-beacon-500">
+              <div className="truncate font-medium text-ink underline-offset-4 group-hover:underline">
                 {node.name}
               </div>
               {node.hostname !== node.name && (
@@ -238,7 +239,12 @@ function HostCard({
             <div className="shrink-0 text-right" title="Reported by agent">
               {os && <div className="text-xs text-ink-muted">{os}</div>}
               {version && (
-                <div className="data text-[11px] text-ink-faint">{version}</div>
+                <div
+                  className="data text-[11px] text-ink-faint"
+                  title={node.agent?.clientVersion ?? undefined}
+                >
+                  {version}
+                </div>
               )}
             </div>
           )}
@@ -401,14 +407,14 @@ function HostCard({
         <div className="absolute right-2.5 top-2.5 flex items-center gap-0.5">
           <RowQuickActions
             node={node}
-            className="rounded-control bg-surface/80 backdrop-blur-sm"
+            className="rounded-control bg-surface"
           />
           <NodeActionsMenu
             nodeId={node.id}
             name={node.name}
             tags={node.tags}
             knownTags={knownTags}
-            className="bg-surface/80 opacity-0 backdrop-blur-sm transition-opacity duration-150 hover:bg-surface-2 group-hover:opacity-100 group-focus-within:opacity-100 data-[state=open]:opacity-100"
+            className="bg-surface opacity-0 transition-opacity duration-150 hover:bg-surface-2 group-hover:opacity-100 group-focus-within:opacity-100 data-[state=open]:opacity-100"
           />
         </div>
       )}

@@ -4,12 +4,12 @@
  * so the mark flips cleanly with the console theme:
  *
  *   - the tile is `fill-ink` (a dark tile in light theme, a light tile in dark),
- *   - the cone is `fill-canvas` (the tile's opposite, so it always reads), and
- *   - the beacon dot is the fixed amber accent, tying the logo to the one signal
- *     colour used across the console.
+ *   - the beacon dot is `fill-canvas` at full strength (the tile's opposite), and
+ *   - the cone is the same fill at reduced opacity, so it reads as the dot's
+ *     wash of light rather than a second shape.
  *
- * Result: light theme = dark tile with a light cone + amber beacon; dark theme =
- * light tile with a dark cone + amber beacon. Size it via `className`.
+ * Monochrome on purpose: no accent hue, so the mark sits quietly in both
+ * themes. Size it via `className`.
  */
 export function BeaconMark({ className }: { className?: string }) {
   return (
@@ -23,9 +23,9 @@ export function BeaconMark({ className }: { className?: string }) {
       <path
         d="M128 92 L180 196 L76 196 Z"
         className="fill-canvas"
-        opacity="0.9"
+        opacity="0.55"
       />
-      <circle cx="128" cy="74" r="18" className="fill-beacon-500" />
+      <circle cx="128" cy="74" r="18" className="fill-canvas" />
     </svg>
   );
 }

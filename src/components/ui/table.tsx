@@ -45,12 +45,12 @@ export function Tr({ className, ...props }: React.ComponentProps<"tr">) {
 export interface ThProps extends React.ComponentProps<"th"> {
   align?: Align;
 }
-/** Column header: uppercase micro-label, like an instrument legend. */
+/** Column header: a quiet sentence-case label, like an instrument legend. */
 export function Th({ className, align = "left", ...props }: ThProps) {
   return (
     <th
       className={cn(
-        "border-b border-line px-3 py-2 text-[11px] font-medium uppercase tracking-[0.08em] text-ink-faint",
+        "border-b border-line px-3 py-2 text-xs font-medium text-ink-faint",
         alignClass[align],
         className,
       )}
@@ -126,7 +126,7 @@ export interface CardRowFieldProps {
 export function CardRowField({ label, children, className }: CardRowFieldProps) {
   return (
     <div className={cn("min-w-0", className)}>
-      <dt className="text-[10px] font-medium uppercase tracking-[0.08em] text-ink-faint">
+      <dt className="text-xs font-medium text-ink-faint">
         {label}
       </dt>
       <dd className="mt-0.5 text-xs text-ink-muted">{children}</dd>

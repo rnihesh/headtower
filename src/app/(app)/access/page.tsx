@@ -32,7 +32,7 @@ export default async function AccessPage() {
 
   // A non-auth request failure on this endpoint almost always means the policy
   // is unset, or Headscale is running in `file` mode (where it owns the
-  // document). That's a graceful, expected state — not a connection fault.
+  // document). That's a graceful, expected state, not a connection fault.
   const policyUnavailable =
     error instanceof HeadscaleRequestError &&
     error.status !== 401 &&
@@ -92,7 +92,7 @@ export default async function AccessPage() {
 
 /**
  * Graceful panel for when the policy can't be read but Headscale itself is
- * reachable — the document isn't set yet, or the server is in `file` mode.
+ * reachable: the document isn't set yet, or the server is in `file` mode.
  */
 function PolicyUnavailable({ detail }: { detail: string }) {
   const message = parseHeadscaleDetail(detail);

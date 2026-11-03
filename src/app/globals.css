@@ -1,75 +1,106 @@
 @import "tailwindcss";
 
 /*
-  Headtower design system - "operator's console".
+  Headtower design system: a quiet, monochrome operator's console.
 
-  The subject is a control plane for a private mesh network, so the UI is built
-  like an instrument panel, not a marketing dashboard: schematic, hairline-ruled,
-  mono for every identifier and number, and exactly one signal accent (beacon
-  amber - the light in the tower). Dark-first, with a full light theme.
+  The subject is a control plane for a private mesh network, so the UI reads
+  like an instrument: true neutral grays, black and white, Geist for interface
+  text and Geist Mono for every identifier and number. Color is reserved for
+  meaning. Green, amber and red report node and action state; nothing else is
+  tinted. No gradients, no glows, no blur.
 
-  Tokens are split in two:
-    - Fixed scales (graphite / beacon / status) live in @theme so they mint
-      utilities like `bg-graphite-900` and `text-beacon-500`.
-    - Semantic surfaces (canvas / surface / line / ink) are CSS variables that
-      flip with the theme, mapped to utilities via @theme inline.
+  Tokens:
+    - Fixed scales live in @theme so they mint utilities (`bg-graphite-950`).
+    - Semantic surfaces (canvas / surface / line / ink), the accent (beacon) and
+      the status colors are CSS variables that flip with the `.dark` class, so
+      light and dark each get values tuned for contrast on their own surfaces.
+
+  The accent keeps its historical name, `beacon`, so existing utilities
+  (`bg-beacon-500`, `ring-beacon-500/40`) keep working. By default it resolves to
+  ink: near-black in light mode, near-white in dark. `on-beacon` is the text
+  color for content sitting on a filled accent. The accent is fixed: the
+  console is mono-only.
 */
 
 @theme {
   --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, "SF Mono", monospace;
 
-  /* Graphite - the structural neutral. Cool blue-ink, never pure black. */
-  --color-graphite-50: #f6f7f9;
-  --color-graphite-100: #eceef1;
-  --color-graphite-200: #d9dde2;
-  --color-graphite-300: #b6bdc6;
-  --color-graphite-400: #8a95a1;
-  --color-graphite-500: #646f7d;
-  --color-graphite-600: #4a5460;
-  --color-graphite-700: #353d47;
-  --color-graphite-800: #1f262e;
-  --color-graphite-900: #161b22;
-  --color-graphite-950: #0e1117;
+  /* Graphite: the structural neutral. Zero chroma. */
+  --color-graphite-50: #fafafa;
+  --color-graphite-100: #f4f4f4;
+  --color-graphite-200: #e5e5e5;
+  --color-graphite-300: #d4d4d4;
+  --color-graphite-400: #a3a3a3;
+  --color-graphite-500: #737373;
+  --color-graphite-600: #525252;
+  --color-graphite-700: #3a3a3a;
+  --color-graphite-800: #262626;
+  --color-graphite-900: #171717;
+  --color-graphite-950: #0a0a0a;
 
-  /* Beacon - the single signal accent. Warm gold, the light in the tower. */
-  --color-beacon-300: #ffd98a;
-  --color-beacon-400: #f9c45c;
-  --color-beacon-500: #f5b544;
-  --color-beacon-600: #e09b22;
+  /* Defaults only; the theme blocks below own the real values. */
+  --color-beacon-300: #404040;
+  --color-beacon-400: #2b2b2b;
+  --color-beacon-500: #171717;
+  --color-beacon-600: #000000;
+  --color-on-beacon: #ffffff;
 
-  /* Status - strictly functional, never decorative. */
-  --color-online-500: #34d399;
-  --color-online-600: #10b981;
-  --color-warn-500: #fb923c;
-  --color-critical-500: #f43f5e;
+  --color-online-500: #16a34a;
+  --color-online-600: #15803d;
+  --color-warn-500: #d97706;
+  --color-critical-500: #dc2626;
 
-  --radius-card: 0.625rem;
-  --radius-control: 0.5rem;
+  --radius-card: 0.5rem;
+  --radius-control: 0.375rem;
 }
 
 :root {
-  --canvas: #fbfaf8;
+  --canvas: #fafafa;
   --surface: #ffffff;
-  --surface-2: #f5f6f8;
-  --line: #e6e3dc;
-  --line-strong: #d4d0c6;
-  --ink: #1a1d21;
-  --ink-muted: #5a6168;
-  --ink-faint: #8a929b;
-  --grid: rgba(20, 24, 30, 0.04);
+  --surface-2: #f4f4f4;
+  --line: #e8e8e8;
+  --line-strong: #d4d4d4;
+  --ink: #171717;
+  --ink-muted: #525252;
+  --ink-faint: #767676;
+  --grid: rgba(0, 0, 0, 0.04);
+
+  /* Accent = ink. 400 is the hover step, 600 the pressed step. */
+  --color-beacon-300: #404040;
+  --color-beacon-400: #2b2b2b;
+  --color-beacon-500: #171717;
+  --color-beacon-600: #000000;
+  --color-on-beacon: #ffffff;
+
+  /* Status, darkened for contrast on white. */
+  --color-online-500: #16a34a;
+  --color-online-600: #15803d;
+  --color-warn-500: #d97706;
+  --color-critical-500: #dc2626;
 }
 
 .dark {
-  --canvas: #0e1117;
-  --surface: #161b22;
-  --surface-2: #1f262e;
-  --line: #262d37;
-  --line-strong: #333c48;
-  --ink: #e6edf3;
-  --ink-muted: #9da7b3;
-  --ink-faint: #646f7d;
-  --grid: rgba(255, 255, 255, 0.025);
+  --canvas: #0a0a0a;
+  --surface: #111111;
+  --surface-2: #1a1a1a;
+  --line: #232323;
+  --line-strong: #303030;
+  --ink: #ededed;
+  --ink-muted: #a1a1a1;
+  --ink-faint: #737373;
+  --grid: rgba(255, 255, 255, 0.03);
+
+  --color-beacon-300: #bdbdbd;
+  --color-beacon-400: #d4d4d4;
+  --color-beacon-500: #ededed;
+  --color-beacon-600: #ffffff;
+  --color-on-beacon: #0a0a0a;
+
+  --color-online-500: #22c55e;
+  --color-online-600: #4ade80;
+  --color-warn-500: #f59e0b;
+  --color-critical-500: #ef4444;
 }
 
 @theme inline {
@@ -89,12 +120,21 @@
   ::before {
     border-color: var(--line);
   }
+  html {
+    color-scheme: light;
+  }
+  html.dark {
+    color-scheme: dark;
+  }
   body {
     background: var(--canvas);
     color: var(--ink);
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
+  }
+  ::selection {
+    background: color-mix(in oklab, var(--ink) 18%, transparent);
   }
   /* Identifiers, IPs, counts: mono + tabular so columns line up like a readout. */
   .data {
@@ -108,8 +148,7 @@
 }
 
 /* .grid-field is a plain backdrop - no pattern. Kept as a class (rather than
-   removed from its 19 call sites) so it stays a single toggle point if a
-   backdrop treatment is wanted again later. */
+   removed from its call sites) so it stays a single toggle point. */
 .grid-field {
   background-image: none;
 }
@@ -120,21 +159,21 @@
 }
 
 /*
-  Accessibility floor: a visible beacon focus ring for any link or button that
+  Accessibility floor: a visible, neutral focus ring for any link or button that
   doesn't define its own. Components that opt into `focus-visible:outline-none`
   (with their own ring) sit in Tailwind's utilities layer and override this.
 */
 @layer base {
   a:focus-visible,
   button:focus-visible {
-    outline: 2px solid var(--color-beacon-500);
+    outline: 2px solid var(--ink-muted);
     outline-offset: 2px;
   }
 }
 
 /*
-  Coverage radar sweep - the tower's signal washing out across the range rings.
-  Slow and faint: motion that reports the control plane is live, not decoration.
+  Coverage radar sweep: the tower's signal washing out across the range rings.
+  Slow and faint: motion that reports the control plane is live.
   Neutralised by the reduced-motion rule below.
 */
 @keyframes coverage-sweep {

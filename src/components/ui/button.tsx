@@ -7,7 +7,7 @@ type ButtonSize = "sm" | "md";
 const variantClasses: Record<ButtonVariant, string> = {
   // The single accent: reserve for the one primary action on a view.
   solid:
-    "border-beacon-500 bg-beacon-500 text-graphite-950 hover:bg-beacon-400 active:bg-beacon-600",
+    "border-beacon-500 bg-beacon-500 text-on-beacon hover:bg-beacon-400 active:bg-beacon-600",
   ghost:
     "border-transparent bg-transparent text-ink-muted hover:bg-surface-2 hover:text-ink",
   outline:

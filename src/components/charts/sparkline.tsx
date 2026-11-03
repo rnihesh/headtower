@@ -1,5 +1,5 @@
 /**
- * Sparkline — an inline trend readout: one hairline path, optional area fill,
+ * Sparkline: an inline trend readout: one hairline path, optional area fill,
  * and a crisp "latest reading" tick. Pure SVG, server-renderable, colours from
  * the design tokens. It stretches to fill its container width (non-scaling
  * strokes keep the line weight constant), so it sits comfortably in a table

@@ -107,7 +107,7 @@ export function BulkActionBar({
   return (
     <>
       <div className="pointer-events-none fixed inset-x-0 bottom-4 z-40 flex justify-center px-4">
-        <div className="pointer-events-auto flex w-full max-w-2xl flex-col gap-2 rounded-card border border-line-strong bg-surface p-2.5 shadow-2xl shadow-graphite-950/40">
+        <div className="pointer-events-auto flex w-full max-w-2xl flex-col gap-2 rounded-card border border-line-strong bg-surface p-2.5 shadow-xl shadow-black/15">
           <div className="flex flex-wrap items-center justify-between gap-2">
             <span className="px-1 text-sm text-ink">
               <span className="data font-medium">{count}</span> selected

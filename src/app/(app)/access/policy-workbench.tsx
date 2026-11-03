@@ -232,7 +232,7 @@ export function PolicyWorkbench({
           <Button variant="solid" size="sm" disabled={!canSave} onClick={commit}>
             <Save className="h-3.5 w-3.5" aria-hidden />
             {pending ? "Saving…" : "Save"}
-            <Kbd className="ml-0.5 border-graphite-700/40 bg-graphite-950/15 text-graphite-900/70">
+            <Kbd className="ml-0.5 border-on-beacon/25 bg-on-beacon/10 text-on-beacon/70">
               ⌘S
             </Kbd>
           </Button>

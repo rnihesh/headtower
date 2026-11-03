@@ -223,7 +223,7 @@ export function ConnectionForm({
                   setRotating(true);
                   invalidate();
                 }}
-                className="inline-flex items-center gap-1.5 text-xs font-medium text-beacon-500 transition-colors hover:text-beacon-400"
+                className="inline-flex items-center gap-1.5 text-xs font-medium text-ink underline decoration-line-strong underline-offset-4 transition-colors hover:decoration-ink"
               >
                 <RotateCw className="h-3.5 w-3.5" aria-hidden />
                 Rotate key

@@ -6,7 +6,7 @@
  * routes, and format timestamps deterministically (UTC, no locale) so a value
  * rendered on the server hydrates identically on the client.
  *
- * No server-only imports here — this module is safe to pull into a
+ * No server-only imports here, so this module is safe to pull into a
  * `"use client"` component.
  */
 
@@ -45,6 +45,19 @@ export function agentOsLabel(
 ): string | null {
   if (!agent?.os) return null;
   return agent.osVersion ? `${agent.os} ${agent.osVersion}` : agent.os;
+}
+
+/**
+ * Tailscale client version trimmed to its release number, e.g.
+ * "1.104.5-t788384763-gd9218e278" becomes "1.104.5". Build suffixes are noise
+ * on a card; the full string stays available via `title`/copy where shown.
+ */
+export function shortClientVersion(
+  version: string | null | undefined,
+): string | null {
+  const v = version?.trim();
+  if (!v) return null;
+  return v.match(/^\d+(?:\.\d+){1,2}/)?.[0] ?? v;
 }
 
 /** A serialisable projection of a Node for rendering in client + server views. */
@@ -155,7 +168,7 @@ export function splitAddresses(addresses: string[]): {
 export function relativeTime(iso: string | null, nowMs: number): string {
   if (!iso) return "never";
   const t = Date.parse(iso);
-  if (Number.isNaN(t)) return "—";
+  if (Number.isNaN(t)) return "-";
 
   const diffMs = nowMs - t;
   const future = diffMs < 0;
@@ -180,9 +193,9 @@ export function relativeTime(iso: string | null, nowMs: number): string {
 
 /** Deterministic absolute timestamp in UTC, e.g. "2025-01-02 15:04 UTC". */
 export function formatUtc(iso: string | null): string {
-  if (!iso) return "—";
+  if (!iso) return "-";
   const t = Date.parse(iso);
-  if (Number.isNaN(t)) return "—";
+  if (Number.isNaN(t)) return "-";
   const d = new Date(t);
   const p = (n: number) => String(n).padStart(2, "0");
   return (
@@ -270,7 +283,7 @@ export function nodeDot(view: Pick<NodeView, "online" | "expired">): {
 
 /** Best display label for a node's owner. */
 export function ownerLabel(user: NodeView["user"]): string {
-  return user.displayName || user.name || user.email || "—";
+  return user.displayName || user.name || user.email || "-";
 }
 
 /* ------------------------------------------------------------------ *

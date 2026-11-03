@@ -18,13 +18,13 @@ export interface TerminalTheme {
 const CONSOLE: TerminalTheme = { id: "console", label: "Console", theme: null };
 
 const GRAPHITE: ITheme = {
-  background: "#0e1117",
-  foreground: "#e6edf3",
-  cursor: "#f5b544",
-  cursorAccent: "#0e1117",
-  selectionBackground: "rgba(245, 181, 68, 0.25)",
-  black: "#161b22",
-  brightBlack: "#646f7d",
+  background: "#0a0a0a",
+  foreground: "#ededed",
+  cursor: "#ededed",
+  cursorAccent: "#0a0a0a",
+  selectionBackground: "rgba(237, 237, 237, 0.2)",
+  black: "#1a1a1a",
+  brightBlack: "#737373",
   red: "#f43f5e",
   brightRed: "#fb7185",
   green: "#34d399",
@@ -37,7 +37,7 @@ const GRAPHITE: ITheme = {
   brightMagenta: "#d8b4fe",
   cyan: "#22d3ee",
   brightCyan: "#67e8f9",
-  white: "#e6edf3",
+  white: "#ededed",
   brightWhite: "#ffffff",
 };
 
@@ -205,15 +205,17 @@ export function resolveTheme(id: string): ITheme {
       .trim();
     return v || fallback;
   };
-  const background = cssVar("--surface-2", "#1f262e");
-  const foreground = cssVar("--ink", "#e6edf3");
+  const background = cssVar("--surface-2", "#1a1a1a");
+  const foreground = cssVar("--ink", "#ededed");
   return {
     ...GRAPHITE,
     background,
     foreground,
+    cursor: foreground,
     cursorAccent: background,
+    selectionBackground: cssVar("--line-strong", "#303030"),
     black: background,
-    brightBlack: cssVar("--ink-faint", "#646f7d"),
+    brightBlack: cssVar("--ink-faint", "#737373"),
     white: foreground,
   };
 }

@@ -1,5 +1,5 @@
 /**
- * Shared internals for the schematic chart kit — tone→class maps, number
+ * Shared internals for the schematic chart kit: tone→class maps, number
  * formatting, and small scale/geometry helpers. Pure and dependency-free so it
  * imports cleanly into both server and client chart components. Every class
  * string is a full literal so Tailwind's scanner keeps them in the build.
@@ -53,7 +53,7 @@ export function sum(ns: number[]): number {
 
 /** Compact, readout-friendly number: 1240 → "1.2k", 18 → "18". */
 export function formatCompact(n: number): string {
-  if (!Number.isFinite(n)) return "—";
+  if (!Number.isFinite(n)) return "-";
   const abs = Math.abs(n);
   if (abs < 1000) return String(Math.round(n * 100) / 100);
   const units: [number, string][] = [

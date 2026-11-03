@@ -94,7 +94,7 @@ const VERB_LABELS: Record<string, string> = {
 /** `"node.rename"` -> `"Renamed node"`; unrecognised shapes title-case as-is. */
 function humanizeAction(action: string): string {
   const key = action.trim();
-  if (!key) return "—";
+  if (!key) return "-";
   const parts = key.split(".");
   if (parts.length < 2) return VERB_LABELS[key] ?? titleCase(key);
   const verb = parts[parts.length - 1];

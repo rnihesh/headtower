@@ -12,7 +12,7 @@ const dotColor: Record<Status, string> = {
 
 export interface StatusDotProps extends React.ComponentProps<"span"> {
   status: Status;
-  /** Animate a signal ring (online only) — motion that reports, not decorates. */
+  /** Animate a signal ring (online only): motion that reports, not decorates. */
   pulse?: boolean;
   label?: React.ReactNode;
 }

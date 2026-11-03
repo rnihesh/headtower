@@ -40,6 +40,7 @@ import {
   nowMs,
   type NodeAgentInfo,
   type NodeView,
+  shortClientVersion,
 } from "@/lib/machines";
 import { Sparkline, Timeline, type TimelineEvent } from "@/components/charts";
 import {
@@ -361,7 +362,7 @@ function DataRow({
 }) {
   return (
     <div className="flex items-start justify-between gap-4 border-b border-line py-2.5 last:border-0">
-      <span className="shrink-0 pt-0.5 text-[11px] font-medium uppercase tracking-[0.08em] text-ink-faint">
+      <span className="shrink-0 pt-0.5 text-xs font-medium text-ink-faint">
         {label}
       </span>
       <span className="flex min-w-0 items-center justify-end gap-1.5">
@@ -397,7 +398,7 @@ function TimeStat({
   }[tone];
   return (
     <div className="flex flex-col gap-0.5">
-      <span className="text-[11px] font-medium uppercase tracking-[0.08em] text-ink-faint">
+      <span className="text-xs font-medium text-ink-faint">
         {label}
       </span>
       <span className={cn("text-sm font-medium", toneClass)}>{primary}</span>
@@ -415,7 +416,7 @@ function FieldLabel({
   children: React.ReactNode;
 }) {
   return (
-    <span className="flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.08em] text-ink-faint">
+    <span className="flex items-center gap-2 text-xs font-medium text-ink-faint">
       {Icon && <Icon className="h-3.5 w-3.5" aria-hidden />}
       {children}
     </span>
@@ -579,7 +580,7 @@ function SystemCard({ agent }: { agent: NodeAgentInfo }) {
             copy={agent.clientVersion}
             title={agent.clientVersion}
           >
-            {agent.clientVersion}
+            {shortClientVersion(agent.clientVersion)}
           </DataRow>
         )}
         <div className="flex flex-col gap-1.5 py-2.5">
@@ -882,7 +883,7 @@ function ConnectivityCard({
 /**
  * Per-node operator history: a 14-day activity sparkline over the recorded
  * actions, then the most recent entries. Graceful when the node has never been
- * touched (or the audit store is unavailable) — both collapse to a quiet note.
+ * touched (or the audit store is unavailable); both collapse to a quiet note.
  */
 function ActivityCard({
   entries,
@@ -943,7 +944,7 @@ function ActivityCard({
         <CardFooter>
           <Link
             href="/audit?targetType=node"
-            className="text-xs font-medium text-beacon-500 transition-colors hover:text-beacon-400"
+            className="text-xs font-medium text-ink underline decoration-line-strong underline-offset-4 transition-colors hover:decoration-ink"
           >
             Full audit trail →
           </Link>
@@ -1005,7 +1006,7 @@ function activityByDay(entries: AuditEntry[], now: number): number[] {
 
 /**
  * Lifecycle events for the key Timeline: registration, last contact (only while
- * offline — a live node's last contact is "now"), and key expiry, toned by
+ * offline, since a live node's last contact is "now"), and key expiry, toned by
  * health. The axis is padded around the events and "now" so the marker always
  * lands inside the frame even when every event clusters together.
  */
@@ -1080,6 +1081,6 @@ const MONTHS_UTC = [
 
 function fmtDayUtc(t: number): string {
   const d = new Date(t);
-  if (Number.isNaN(d.getTime())) return "—";
+  if (Number.isNaN(d.getTime())) return "-";
   return `${MONTHS_UTC[d.getUTCMonth()]} ${d.getUTCDate()}`;
 }

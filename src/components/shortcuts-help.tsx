@@ -83,7 +83,7 @@ export function ShortcutsHelp() {
         <DialogBody className="flex flex-col gap-4">
           {SHORTCUT_GROUPS.map((group) => (
             <div key={group.title} className="flex flex-col gap-1.5">
-              <p className="text-[10px] font-medium uppercase tracking-[0.14em] text-ink-faint">
+              <p className="text-xs font-medium text-ink-faint">
                 {group.title}
               </p>
               <div className="flex flex-col gap-1.5">

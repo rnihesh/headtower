@@ -87,7 +87,7 @@ export function AccountMenu({
             </span>
           )}
         </DropdownMenuLabel>
-        <div className="px-2 pb-1.5 text-[11px] uppercase tracking-[0.08em] text-ink-faint">
+        <div className="px-2 pb-1.5 text-xs text-ink-faint">
           {account.roleLabel}
         </div>
         <DropdownMenuItem asChild>

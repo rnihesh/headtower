@@ -29,7 +29,7 @@ export const metadata = {
  *
  * Headscale 0.26 - 0.29 serves no DNS over `/api/v1` (`dns.apiAvailable` is
  * `false`), so there is nothing to read at runtime today. When a future release
- * — or a Headtower config-file reader (see `src/lib/config/`) — surfaces the
+ * (or a Headtower config-file reader, see `src/lib/config/`) surfaces the
  * `dns:` block, return a populated {@link DNSConfig} here and the read-only
  * readout below renders in place of the config-driven notice. No fabricated
  * values: until then this honestly returns null.
@@ -49,7 +49,7 @@ const DNS_KEYS = [
     type: "bool",
     field: "magicDns",
     summary:
-      "Enable MagicDNS — resolve other nodes by hostname across the tailnet.",
+      "Enable MagicDNS to resolve other nodes by hostname across the tailnet.",
   },
   {
     key: "base_domain",
@@ -70,7 +70,7 @@ const DNS_KEYS = [
     type: "map",
     field: "splitDns",
     summary:
-      "Per-domain resolvers — send queries for specific suffixes to specific servers (split DNS).",
+      "Per-domain resolvers: send queries for specific suffixes to specific servers (split DNS).",
   },
   {
     key: "search_domains",
@@ -136,7 +136,7 @@ export default function DnsPage() {
             </Chip>
           </span>
         }
-        description="MagicDNS, the tailnet base domain, global and split nameservers, search domains, and static records — all resolved by Headscale from its server config."
+        description="MagicDNS, the tailnet base domain, global and split nameservers, search domains, and static records, all resolved by Headscale from its server config."
       />
 
       {config ? (
@@ -169,8 +169,8 @@ function ConfigDrivenNotice() {
           </h2>
           <p className="max-w-2xl text-xs leading-relaxed text-ink-muted">
             Headscale {DNS_RANGE} exposes no DNS over its REST API. The whole{" "}
-            <span className="data text-ink">dns:</span> block — MagicDNS,
-            nameservers, search domains, split DNS, and static records — is read
+            <span className="data text-ink">dns:</span> block (MagicDNS,
+            nameservers, search domains, split DNS, and static records) is read
             from the server config and applied when Headscale starts. Headtower
             reports the tailnet faithfully, so it won&apos;t show controls that
             can&apos;t take effect.
@@ -185,7 +185,7 @@ function ConfigDrivenNotice() {
           <span className="data text-ink">{CONFIG_PATH}</span>
         </NoticeRow>
         <NoticeRow icon={RefreshCw} label="Apply changes">
-          Edit the file on the host, then restart Headscale —{" "}
+          Edit the file on the host, then restart Headscale:{" "}
           <span className="data text-ink">systemctl restart headscale</span> (or
           restart the container).
         </NoticeRow>
@@ -198,7 +198,7 @@ function ConfigDrivenNotice() {
             href={HEADSCALE_DNS_DOCS}
             target="_blank"
             rel="noreferrer"
-            className="inline-flex items-center gap-1 font-medium text-beacon-500 transition-colors hover:text-beacon-400"
+            className="inline-flex items-center gap-1 font-medium text-ink underline decoration-line-strong underline-offset-4 transition-colors hover:decoration-ink"
           >
             Headscale DNS reference
             <ExternalLink className="h-3 w-3" aria-hidden />
@@ -221,7 +221,7 @@ function NoticeRow({
   return (
     <div className="flex items-start gap-3 px-5 py-3">
       <Icon className="mt-0.5 h-3.5 w-3.5 shrink-0 text-ink-faint" aria-hidden />
-      <span className="w-28 shrink-0 text-[11px] uppercase tracking-[0.1em] text-ink-faint">
+      <span className="w-28 shrink-0 text-xs text-ink-faint">
         {label}
       </span>
       <span className="min-w-0 flex-1 leading-relaxed text-ink-muted">
@@ -368,7 +368,7 @@ function ReadoutRow({
 }) {
   return (
     <div className="flex flex-col gap-1.5 px-4 py-3 sm:flex-row sm:items-baseline sm:gap-4">
-      <span className="w-40 shrink-0 text-[11px] uppercase tracking-[0.1em] text-ink-faint">
+      <span className="w-40 shrink-0 text-xs text-ink-faint">
         {label}
       </span>
       <div className="min-w-0 flex-1">{children}</div>

@@ -65,7 +65,7 @@ export function RowQuickActions({
             // terminal never also opens the detail view underneath it.
             onClick={(e) => e.stopPropagation()}
             className={cn(
-              "inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-[0.3rem] text-ink-faint transition-colors hover:bg-surface-2 hover:text-beacon-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-beacon-500/40",
+              "inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-[0.3rem] text-ink-faint transition-colors hover:bg-surface-2 hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-beacon-500/40",
             )}
           >
             <SquareTerminal className="h-3.5 w-3.5" aria-hidden />

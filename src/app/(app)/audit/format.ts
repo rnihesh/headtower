@@ -1,5 +1,5 @@
 /**
- * Audit view formatting helpers — pure, no server-only or client-only imports,
+ * Audit view formatting helpers: pure, no server-only or client-only imports,
  * so the Server Component (page), the client filter leaf, and the CSV route
  * handler can all share them without dragging `@/lib/db` into the browser.
  *
@@ -44,7 +44,7 @@ const VERB_LABELS: Record<string, string> = {
  */
 export function humanizeAction(action: string): string {
   const key = action.trim();
-  if (!key) return "—";
+  if (!key) return "-";
 
   const parts = key.split(".");
   if (parts.length >= 2) {
@@ -78,7 +78,7 @@ const WEEK = 7 * DAY;
  */
 export function relativeTime(date: Date, now: number = Date.now()): string {
   const diff = now - date.getTime();
-  if (!Number.isFinite(diff)) return "—";
+  if (!Number.isFinite(diff)) return "-";
   if (diff < 0) return "just now";
   if (diff < MINUTE) return "just now";
   if (diff < HOUR) return `${Math.floor(diff / MINUTE)}m ago`;
@@ -106,7 +106,7 @@ export function summarizeDetail(detail: AuditDetail | null | undefined): string 
 }
 
 function formatValue(value: unknown): string {
-  if (value === null || value === undefined) return "—";
+  if (value === null || value === undefined) return "-";
   if (typeof value === "string") return value;
   if (typeof value === "number" || typeof value === "boolean") return String(value);
   try {

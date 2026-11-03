@@ -31,7 +31,7 @@ one is a single container: `docker run -p 8080:8080 headscale/headscale:latest`.
 
 - **Read `AGENTS.md` first.** The pinned Next.js version has breaking changes;
   the guides under `node_modules/next/dist/docs/` are the source of truth.
-- **Design system.** Graphite/ink neutrals plus a single beacon-amber accent.
+- **Design system.** Monochrome neutrals (zero chroma) with color reserved for status.
   No blue. Geist for UI, Geist Mono for data. Status colors are functional
   only. If a change fights this, it will be asked to change.
 - **Every mutation** goes through a server action that is RBAC-gated

@@ -181,7 +181,7 @@ function CheckRow({ check }: { check: DiagnosticCheck }) {
       <div className="flex min-w-0 flex-1 flex-col gap-0.5">
         <div className="flex items-center gap-2">
           <span className="text-sm font-medium text-ink">{check.label}</span>
-          <span className={cn("data text-[11px] uppercase tracking-[0.08em]", statusTone[check.status])}>
+          <span className={cn("text-xs", statusTone[check.status])}>
             {statusLabel[check.status]}
           </span>
         </div>

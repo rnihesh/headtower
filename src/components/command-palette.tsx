@@ -568,10 +568,10 @@ export function CommandPalette({
   return (
     <DialogPrimitive.Root open={open} onOpenChange={handleOpenChange}>
       <DialogPrimitive.Portal>
-        <DialogPrimitive.Overlay className="fixed inset-0 z-50 bg-graphite-950/70 backdrop-blur-[2px]" />
+        <DialogPrimitive.Overlay className="fixed inset-0 z-50 bg-black/50" />
         <DialogPrimitive.Content
           aria-label="Command palette"
-          className="fixed left-1/2 top-[14vh] z-50 grid-field w-[calc(100%-2rem)] max-w-xl -translate-x-1/2 overflow-hidden rounded-card border border-line-strong bg-surface shadow-2xl shadow-graphite-950/50 focus:outline-none"
+          className="fixed left-1/2 top-[14vh] z-50 grid-field w-[calc(100%-2rem)] max-w-xl -translate-x-1/2 overflow-hidden rounded-card border border-line-strong bg-surface shadow-xl shadow-black/15 focus:outline-none"
         >
           <DialogPrimitive.Title className="sr-only">
             Command palette
@@ -629,7 +629,7 @@ export function CommandPalette({
                 return (
                   <React.Fragment key={command.id}>
                     {showHeader && (
-                      <div className="px-4 pb-1 pt-3 text-[10px] font-medium uppercase tracking-[0.14em] text-ink-faint">
+                      <div className="px-4 pb-1 pt-3 text-xs font-medium text-ink-faint">
                         {command.section}
                       </div>
                     )}

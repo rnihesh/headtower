@@ -409,7 +409,7 @@ function TargetCell({ entry }: { entry: AuditEntry }) {
     return <span className="text-ink-faint">·</span>;
   }
 
-  const name = entry.targetName?.trim() || entry.targetId || "—";
+  const name = entry.targetName?.trim() || entry.targetId || "-";
   const href = targetHref(entry.targetType, entry.targetId);
 
   const body = (
@@ -421,7 +421,7 @@ function TargetCell({ entry }: { entry: AuditEntry }) {
 
   if (href) {
     return (
-      <Link href={href} className="transition-colors hover:text-beacon-500">
+      <Link href={href} className="transition-colors hover:text-ink">
         {body}
       </Link>
     );
@@ -563,7 +563,7 @@ function Pagination({
   return (
     <div className="flex flex-wrap items-center justify-between gap-3 px-1">
       <p className="data text-xs text-ink-faint">
-        {firstRow}–{lastRow} of {total}
+        {firstRow}-{lastRow} of {total}
       </p>
       <div className="flex items-center gap-1">
         <PageLink filters={filters} page={page - 1} disabled={!hasPrev} label="Previous">
@@ -634,12 +634,12 @@ function ErrorPanel({ message }: { message: string }) {
         <p className="text-sm font-medium text-ink">Couldn&apos;t load the audit trail</p>
         <p className="mx-auto max-w-sm text-xs text-ink-muted">{message}</p>
       </div>
-      <a
+      <Link
         href="/audit"
-        className="text-xs font-medium text-beacon-500 transition-colors hover:text-beacon-400"
+        className="text-xs font-medium text-ink underline decoration-line-strong underline-offset-4 transition-colors hover:decoration-ink"
       >
         Retry
-      </a>
+      </Link>
     </div>
   );
 }

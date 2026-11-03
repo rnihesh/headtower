@@ -27,7 +27,7 @@ export function Field({
       {label != null && (
         <label
           htmlFor={htmlFor}
-          className="text-[11px] font-medium uppercase tracking-[0.08em] text-ink-muted"
+          className="text-xs font-medium text-ink-muted"
         >
           {label}
           {required && <span className="ml-0.5 text-critical-500">*</span>}
@@ -48,7 +48,7 @@ const controlBase =
 
 export interface InputProps extends React.ComponentProps<"input"> {
   invalid?: boolean;
-  /** mono + tabular — for IPs, keys, IDs. */
+  /** mono + tabular, for IPs, keys, IDs. */
   mono?: boolean;
 }
 export function Input({ className, invalid, mono, ...props }: InputProps) {

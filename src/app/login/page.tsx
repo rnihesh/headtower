@@ -38,7 +38,7 @@ export default async function LoginPage({
       <div className="grid-field pointer-events-none absolute inset-0" aria-hidden />
 
       <div className="relative w-full max-w-sm">
-        <div className="rounded-card border border-line bg-surface p-8 shadow-xl shadow-graphite-950/20">
+        <div className="rounded-card border border-line bg-surface p-8">
           {/* Brand: beacon mark in its housing + wordmark. */}
           <div className="flex flex-col items-center text-center">
             <BeaconMark className="h-12 w-12" />
@@ -77,7 +77,7 @@ export default async function LoginPage({
                 </p>
                 <Link
                   href="/"
-                  className="mt-3 inline-flex text-sm font-medium text-beacon-500 hover:text-beacon-400"
+                  className="mt-3 inline-flex text-sm font-medium text-ink underline decoration-line-strong underline-offset-4 hover:decoration-ink"
                 >
                   Enter the console
                 </Link>

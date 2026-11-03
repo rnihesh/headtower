@@ -84,7 +84,7 @@ const VARIANT_META: Record<
   ToastVariant,
   { icon: LucideIcon; iconClass: string }
 > = {
-  success: { icon: CheckCircle2, iconClass: "text-beacon-500" },
+  success: { icon: CheckCircle2, iconClass: "text-online-500" },
   error: { icon: TriangleAlert, iconClass: "text-critical-500" },
 };
 
@@ -133,7 +133,7 @@ function ToastCard({ toast: item }: { toast: ToastRecord }) {
   return (
     <li
       className={cn(
-        "pointer-events-auto flex items-start gap-2 rounded-card border border-line-strong bg-surface px-3.5 py-3 shadow-2xl shadow-graphite-950/30",
+        "pointer-events-auto flex items-start gap-2 rounded-card border border-line-strong bg-surface px-3.5 py-3 shadow-xl shadow-black/15",
         "transition-[opacity,transform] duration-200 ease-out",
         entered ? "translate-y-0 opacity-100" : "translate-y-1 opacity-0",
       )}

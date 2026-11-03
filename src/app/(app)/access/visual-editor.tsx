@@ -473,7 +473,7 @@ export function VisualEditor({ model, onChange }: VisualEditorProps) {
 function GroupLabel({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex items-center gap-3 pt-1">
-      <span className="data text-[11px] uppercase tracking-[0.12em] text-ink-faint">
+      <span className="text-xs text-ink-faint">
         {children}
       </span>
       <span className="h-px flex-1 bg-line" aria-hidden />
@@ -590,7 +590,7 @@ function RuleShell({ label, onRemove, header, children, className }: RuleShellPr
       )}
     >
       <div className="mb-2.5 flex items-center justify-between gap-2">
-        <span className="data text-[11px] uppercase tracking-[0.08em] text-ink-faint">
+        <span className="text-xs text-ink-faint">
           {label}
         </span>
         <div className="flex items-center gap-2">

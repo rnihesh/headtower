@@ -21,7 +21,7 @@ export function SettingsError({ title, message, retryHref }: SettingsErrorProps)
       action={
         <a
           href={retryHref}
-          className="text-xs font-medium text-beacon-500 transition-colors hover:text-beacon-400"
+          className="text-xs font-medium text-ink underline decoration-line-strong underline-offset-4 transition-colors hover:decoration-ink"
         >
           Retry
         </a>

@@ -251,7 +251,7 @@ function DataRow({
 }) {
   return (
     <div className="flex items-start justify-between gap-4 border-b border-line py-2.5 last:border-0">
-      <span className="shrink-0 pt-0.5 text-[11px] font-medium uppercase tracking-[0.08em] text-ink-faint">
+      <span className="shrink-0 pt-0.5 text-xs font-medium text-ink-faint">
         {label}
       </span>
       <span className="flex min-w-0 items-center justify-end gap-1.5">
@@ -386,7 +386,7 @@ function OwnedNodeRow({ node }: { node: NodeView }) {
       >
         <StatusDot status={dot.status} pulse={node.online} />
         <div className="flex min-w-0 flex-1 flex-col leading-tight">
-          <span className="truncate text-sm font-medium text-ink transition-colors group-hover:text-beacon-500">
+          <span className="truncate text-sm font-medium text-ink underline-offset-4 group-hover:underline">
             {node.name}
           </span>
           {node.hostname !== node.name && (

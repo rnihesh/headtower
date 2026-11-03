@@ -183,7 +183,7 @@ function ProviderRow({
             />
           </div>
         ) : (
-          <span className="pr-1 text-xs text-ink-faint">—</span>
+          <span className="pr-1 text-xs text-ink-faint">-</span>
         )}
       </Td>
 

@@ -1,10 +1,10 @@
 /**
- * CoverageView — the dashboard's signature element.
+ * CoverageView: the dashboard's signature element.
  *
  * A schematic "OS-grouped connection mesh": a control-tower spine runs down the
  * left edge, and every operating system present on the tailnet gets its own
  * horizontal lane branching off it. Each device is a marker on its lane, wired
- * back with a thin line — solid beacon-tinted and a filled dot when online,
+ * back with a thin line: solid beacon-tinted and a filled dot when online,
  * faint dashed and a hollow dot when not. No rings, no radar: the shape of the
  * fleet is read by scanning lanes top to bottom, the way an operator would scan
  * a patch panel. Server-rendered, colours driven entirely by design tokens.
@@ -32,7 +32,7 @@ export interface CoveragePoint {
   online: boolean;
   /**
    * Raw agent-reported OS (e.g. "linux", "darwin", "windows"), if the agent
-   * sidecar matched this node. Absent when there is no agent enrichment —
+   * sidecar matched this node. Absent when there is no agent enrichment;
    * every point then normalises into the "unknown" lane.
    */
   os?: string;
@@ -40,7 +40,7 @@ export interface CoveragePoint {
 
 type OsKey = "linux" | "macos" | "windows" | "ios" | "android" | "freebsd" | "unknown";
 
-/** Lane display order — server platforms first, mobile after, unknown last. */
+/** Lane display order: server platforms first, mobile after, unknown last. */
 const OS_ORDER: readonly OsKey[] = [
   "linux",
   "macos",
@@ -199,7 +199,7 @@ function LaneRow({ lane }: { lane: Lane }) {
           )}
           aria-hidden
         />
-        <span className="data truncate text-[11px] uppercase tracking-[0.12em] text-ink-muted">
+        <span className="data truncate text-xs text-ink-muted">
           {lane.label}
         </span>
         <Chip
@@ -275,7 +275,7 @@ function EmptyCoverage() {
       className="flex min-h-[220px] flex-col items-center justify-center gap-3 px-6 py-14 text-center"
     >
       <BeaconMark className="h-8 w-8 opacity-30" />
-      <p className="data text-[11px] uppercase tracking-[0.14em] text-ink-faint">
+      <p className="text-xs text-ink-faint">
         No devices yet
       </p>
     </div>
@@ -301,7 +301,7 @@ export function CoverageView({ points }: { points: CoveragePoint[] }) {
           <BeaconMark className="z-10 h-6 w-6 shrink-0 sm:h-7 sm:w-7" />
           <span
             aria-hidden
-            className="absolute top-9 bottom-3 left-1/2 w-px -translate-x-1/2 bg-gradient-to-b from-beacon-500/70 via-beacon-500/25 to-beacon-500/5 sm:top-10"
+            className="absolute top-9 bottom-3 left-1/2 w-px -translate-x-1/2 bg-line-strong sm:top-10"
           />
         </div>
 

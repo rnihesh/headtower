@@ -165,7 +165,7 @@ export function MemberRow({ member, isSelf, canManage, roleOptions }: MemberRowP
             </DropdownMenu>
           </div>
         ) : (
-          <span className="pr-1 text-xs text-ink-faint">—</span>
+          <span className="pr-1 text-xs text-ink-faint">-</span>
         )}
       </Td>
 

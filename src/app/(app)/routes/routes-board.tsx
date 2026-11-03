@@ -92,7 +92,7 @@ function NodeRouteCard({
         <CardTitle className="flex items-center gap-2">
           <Link
             href={`/machines/${group.nodeId}`}
-            className="transition-colors hover:text-beacon-500"
+            className="transition-colors hover:text-ink"
           >
             {group.nodeName}
           </Link>
@@ -290,7 +290,7 @@ function RouteRow({
                   : "Revoke"}
             </Button>
           ) : (
-            <span className="text-xs text-ink-faint">—</span>
+            <span className="text-xs text-ink-faint">-</span>
           )}
         </Td>
       </Tr>

@@ -30,7 +30,7 @@ export const DEFAULT_SSH_USER = "root";
 export interface TerminalConsoleProps {
   /** Node hostname (MagicDNS) or tailnet IP the agent will dial on port 22. */
   host: string;
-  /** SSH user to open the first session with — from `?user=`, or {@link DEFAULT_SSH_USER}. */
+  /** SSH user to open the first session with: from `?user=`, or {@link DEFAULT_SSH_USER}. */
   defaultUser: string;
 }
 
@@ -94,7 +94,7 @@ export function TerminalConsole({ host, defaultUser }: TerminalConsoleProps) {
           <div className="flex h-8 items-center gap-1.5 rounded-control border border-line-strong bg-surface px-2.5 focus-within:border-ink-faint">
             <label
               htmlFor="ssh-user-input"
-              className="text-[10px] font-medium uppercase tracking-wide text-ink-faint"
+              className="text-xs font-medium text-ink-faint"
             >
               user
             </label>

@@ -13,12 +13,7 @@ import { Chip } from "@/components/ui/chip";
 import { EmptyState } from "@/components/ui/empty-state";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { Table, TableBody, TableHead, Th, Tr } from "@/components/ui/table";
-import {
-  ACCENT_COOKIE,
-  FONT_SIZE_COOKIE,
-  normalizeAccent,
-  normalizeFontSize,
-} from "./appearance";
+import { FONT_SIZE_COOKIE, normalizeFontSize } from "./appearance";
 import { AppearanceForm } from "./appearance-form";
 import {
   CreatePersonalApiKeyDialog,
@@ -90,7 +85,6 @@ export default async function AccountPage() {
   // (see AppShell). Falls back to each default when unset/garbage.
   const cookieStore = await cookies();
   const initialTheme = normalizeTheme(cookieStore.get(THEME_COOKIE)?.value);
-  const initialAccent = normalizeAccent(cookieStore.get(ACCENT_COOKIE)?.value);
   const initialFontSize = normalizeFontSize(cookieStore.get(FONT_SIZE_COOKIE)?.value);
 
   return (
@@ -110,7 +104,6 @@ export default async function AccountPage() {
         <CardBody>
           <AppearanceForm
             initialTheme={initialTheme}
-            initialAccent={initialAccent}
             initialFontSize={initialFontSize}
           />
         </CardBody>
@@ -252,7 +245,7 @@ function AccountCard({ authSession }: { authSession: Session }) {
 function ReadoutRow({ label, children }: { label: string; children: ReactNode }) {
   return (
     <div className="flex flex-col gap-1.5 px-4 py-3 sm:flex-row sm:items-baseline sm:gap-4">
-      <span className="w-40 shrink-0 text-[11px] uppercase tracking-[0.1em] text-ink-faint">
+      <span className="w-40 shrink-0 text-xs text-ink-faint">
         {label}
       </span>
       <div className="min-w-0 flex-1">{children}</div>

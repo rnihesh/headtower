@@ -44,7 +44,7 @@ export function Chip({
   );
 }
 
-/** A tailnet identifier token (tags, hostnames) — always mono. */
+/** A tailnet identifier token (tags, hostnames), always mono. */
 export function Tag({ className, ...props }: React.ComponentProps<"span">) {
   return (
     <span

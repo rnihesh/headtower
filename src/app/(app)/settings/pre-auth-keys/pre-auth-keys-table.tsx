@@ -71,7 +71,7 @@ export function PreAuthKeysTable({
         <div className="flex min-w-[10rem] flex-col gap-1.5">
           <label
             htmlFor="pak-filter-owner"
-            className="text-[11px] font-medium uppercase tracking-[0.08em] text-ink-muted"
+            className="text-xs font-medium text-ink-muted"
           >
             Owner
           </label>
@@ -127,7 +127,7 @@ export function PreAuthKeysTable({
                 setOwnerId("");
                 setHideInactive(false);
               }}
-              className="mt-1 text-xs text-beacon-500 hover:underline"
+              className="mt-1 text-xs text-ink underline decoration-line-strong underline-offset-4 hover:decoration-ink"
             >
               Reset filters
             </button>
@@ -235,7 +235,7 @@ function PreAuthKeyRow({
               expired={expired}
             />
           ) : (
-            <span className="pr-1 text-xs text-ink-faint">—</span>
+            <span className="pr-1 text-xs text-ink-faint">-</span>
           )}
         </div>
       </Td>
@@ -312,7 +312,7 @@ function PreAuthKeyCard({
             expired={expired}
           />
         ) : (
-          <span className="pr-1 text-xs text-ink-faint">—</span>
+          <span className="pr-1 text-xs text-ink-faint">-</span>
         )}
       </div>
     </CardRow>

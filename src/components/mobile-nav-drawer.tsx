@@ -80,14 +80,14 @@ export function MobileNavDrawer({
       <DialogPrimitive.Portal>
         <DialogPrimitive.Overlay
           className={cn(
-            "fixed inset-0 z-50 bg-graphite-950/70 backdrop-blur-[2px] transition-opacity duration-200 ease-out",
+            "fixed inset-0 z-50 bg-black/50 transition-opacity duration-200 ease-out",
             entered ? "opacity-100" : "opacity-0",
           )}
         />
         <DialogPrimitive.Content
           aria-label="Navigation"
           className={cn(
-            "grid-field fixed inset-y-0 left-0 z-50 flex h-full w-[min(78vw,280px)] flex-col border-r border-line-strong bg-surface shadow-2xl shadow-graphite-950/50 transition-transform duration-200 ease-out focus:outline-none",
+            "grid-field fixed inset-y-0 left-0 z-50 flex h-full w-[min(78vw,280px)] flex-col border-r border-line-strong bg-surface shadow-xl shadow-black/15 transition-transform duration-200 ease-out focus:outline-none",
             entered ? "translate-x-0" : "-translate-x-full",
           )}
         >

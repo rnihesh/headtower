@@ -17,7 +17,7 @@ export default function NotFound() {
       </Link>
 
       <div className="flex flex-col items-center gap-2">
-        <span className="data text-[11px] uppercase tracking-[0.18em] text-beacon-500">
+        <span className="data text-xs text-ink-faint">
           404 · off the grid
         </span>
         <h1 className="text-2xl font-semibold tracking-tight text-ink">

@@ -1,9 +1,9 @@
 /**
  * Personal appearance preferences - shared constants + isomorphic helpers.
  *
- * Extends the console's theme system (`@/lib/theme`) with two more per-browser,
- * cookie-persisted preferences introduced by this page: which hue the single
- * beacon accent resolves to, and the base text size. Same shape as
+ * Extends the console's theme system (`@/lib/theme`) with one more per-browser,
+ * cookie-persisted preference introduced by this page: the base text size. The
+ * accent is fixed (mono ink, see globals.css). Same shape as
  * `@/lib/theme`: a persisted cookie, pure normalize helpers safe to run on the
  * server (seeding the form's first render from the saved cookie), and
  * DOM-applying functions the client form calls on selection.
@@ -14,71 +14,18 @@
  * called, which `AppearanceForm` does exclusively on the client.
  *
  * Known gap vs. `@/lib/theme`: there is no root-layout no-flash script for
- * these two (out of this page's scope), so a saved preference only re-applies
+ * the text size (out of this page's scope), so a saved preference only re-applies
  * once this page has mounted - see `AppearanceForm`'s doc comment.
  */
 
-/** Cookies carrying the two preferences, alongside `@/lib/theme`'s `ht_theme`. */
-export const ACCENT_COOKIE = "ht_accent";
+/** Cookie carrying the text-size preference, alongside `@/lib/theme`'s `ht_theme`. */
 export const FONT_SIZE_COOKIE = "ht_font_size";
+
+/** Accent cookie written by older builds; only read to clear it. */
+const LEGACY_ACCENT_COOKIE = "ht_accent";
 
 /** Persist for a year, same as the theme cookie - a non-secret UI preference. */
 export const APPEARANCE_MAX_AGE_SECONDS = 60 * 60 * 24 * 365;
-
-/** One selectable accent hue: the four beacon shades Tailwind's utilities reference. */
-export interface AccentPreset {
-  id: string;
-  label: string;
-  /** Swatch shown in the picker (the 500 shade). */
-  swatch: string;
-  vars: { 300: string; 400: string; 500: string; 600: string };
-  /**
-   * Text colour for the check icon drawn on the swatch. Picked per swatch
-   * (not derived from the theme) since the swatch is a fixed hex that
-   * doesn't flip with `.dark` - a single hardcoded shade doesn't contrast
-   * reliably across every preset's lightness.
-   */
-  check: string;
-}
-
-/**
- * The single beacon accent stays warm and blue-free: amber (the shipped
- * default) plus two warm-neutral-compatible variants. Selecting "amber" is a
- * no-op since it mirrors the shipped default.
- */
-export const ACCENT_PRESETS: readonly AccentPreset[] = [
-  {
-    id: "amber",
-    label: "Amber",
-    swatch: "#f5b544",
-    vars: { 300: "#ffd98a", 400: "#f9c45c", 500: "#f5b544", 600: "#e09b22" },
-    check: "text-graphite-950",
-  },
-  {
-    id: "ember",
-    label: "Ember",
-    swatch: "#f97316",
-    vars: { 300: "#fdba74", 400: "#fb923c", 500: "#f97316", 600: "#ea580c" },
-    check: "text-graphite-950",
-  },
-  {
-    id: "brass",
-    label: "Brass",
-    swatch: "#8a6d3f",
-    vars: { 300: "#c9ad74", 400: "#ab8a52", 500: "#8a6d3f", 600: "#6b5330" },
-    check: "text-graphite-50",
-  },
-];
-export const DEFAULT_ACCENT = "amber";
-
-export function isAccentId(value: string | null | undefined): boolean {
-  return ACCENT_PRESETS.some((preset) => preset.id === value);
-}
-
-/** The preference, or the default when the cookie is missing/garbage. */
-export function normalizeAccent(value: string | null | undefined): string {
-  return isAccentId(value) ? (value as string) : DEFAULT_ACCENT;
-}
 
 /** One selectable base text size - every rem-based control scales from it. */
 export interface FontSizePreset {
@@ -105,29 +52,32 @@ export function normalizeFontSize(value: string | null | undefined): string {
 }
 
 /**
- * Apply an accent preset to the document live, by overriding the four beacon
- * shades on the root element. Tailwind's `bg-beacon-500` etc. utilities read
- * `var(--color-beacon-500)`, so this recolours every one of them at once
- * without touching `globals.css`. Client-only: relies on `document`.
+ * Older builds let operators pick a warm accent, saved in the `ht_accent`
+ * cookie and applied as inline overrides on the root element. The console is
+ * mono-only now, so this clears both: the stale cookie is expired and any
+ * lingering overrides are removed, letting the theme-aware ink accent in
+ * globals.css apply. Safe to call when neither exists. Client-only.
  */
-export function applyAccent(id: string): void {
-  const preset = ACCENT_PRESETS.find((p) => p.id === id) ?? ACCENT_PRESETS[0];
+export function clearLegacyAccent(): void {
   const root = document.documentElement.style;
-  root.setProperty("--color-beacon-300", preset.vars[300]);
-  root.setProperty("--color-beacon-400", preset.vars[400]);
-  root.setProperty("--color-beacon-500", preset.vars[500]);
-  root.setProperty("--color-beacon-600", preset.vars[600]);
+  for (const name of [
+    "--color-beacon-300",
+    "--color-beacon-400",
+    "--color-beacon-500",
+    "--color-beacon-600",
+    "--color-on-beacon",
+  ]) {
+    root.removeProperty(name);
+  }
+  if (document.cookie.split("; ").some((c) => c.startsWith(`${LEGACY_ACCENT_COOKIE}=`))) {
+    document.cookie = `${LEGACY_ACCENT_COOKIE}=; path=/; max-age=0; samesite=lax`;
+  }
 }
 
 /** Apply a font-size preset to the document live (the root rem base). Client-only. */
 export function applyFontSize(id: string): void {
   const preset = FONT_SIZE_PRESETS.find((p) => p.id === id) ?? FONT_SIZE_PRESETS[1];
   document.documentElement.style.fontSize = `${preset.px}px`;
-}
-
-/** Write the accent cookie (client-side, via `document.cookie`). */
-export function persistAccent(id: string): void {
-  document.cookie = `${ACCENT_COOKIE}=${id}; path=/; max-age=${APPEARANCE_MAX_AGE_SECONDS}; samesite=lax`;
 }
 
 /** Write the font-size cookie (client-side, via `document.cookie`). */

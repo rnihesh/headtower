@@ -31,6 +31,7 @@ import {
   ownerLabel,
   type DotStatus,
   type NodeView,
+  shortClientVersion,
 } from "@/lib/machines";
 
 /** Hard ceiling on a selection, matching the bulk Server Actions. */
@@ -217,7 +218,7 @@ export function MachinesTable({
                   <button
                     type="button"
                     onClick={clear}
-                    className="mt-1 text-xs text-beacon-500 hover:underline"
+                    className="mt-1 text-xs text-ink underline decoration-line-strong underline-offset-4 hover:decoration-ink"
                   >
                     Reset filters
                   </button>
@@ -319,7 +320,7 @@ function MachineRow({
         <Link
           href={`/machines/${node.id}`}
           onClick={(e) => e.stopPropagation()}
-          className="block font-medium text-ink hover:text-beacon-500"
+          className="block font-medium text-ink underline-offset-4 hover:underline"
         >
           {node.name}
         </Link>
@@ -333,7 +334,7 @@ function MachineRow({
             className="data block text-xs text-ink-faint"
             title="Reported by agent"
           >
-            {[agentOsLabel(node.agent), node.agent.clientVersion]
+            {[agentOsLabel(node.agent), shortClientVersion(node.agent.clientVersion)]
               .filter(Boolean)
               .join(" · ")}
           </span>
@@ -353,14 +354,14 @@ function MachineRow({
             {node.ipv6}
           </span>
         )}
-        {!node.ipv4 && !node.ipv6 && <span className="text-ink-faint">—</span>}
+        {!node.ipv4 && !node.ipv6 && <span className="text-ink-faint">-</span>}
       </Td>
 
       {/* Tags - ACL tags first, then quiet Headtower-local metadata chips
           (environment badge + labels) as context next to them. */}
       <Td>
         {node.tags.length === 0 && node.invalidTags.length === 0 && !hasMeta ? (
-          <span className="text-ink-faint">—</span>
+          <span className="text-ink-faint">-</span>
         ) : (
           <div className="flex flex-wrap items-center gap-1">
             {visibleTags.map((tag) => (
@@ -426,7 +427,7 @@ function MachineRow({
             !node.advertisesExit &&
             node.subnetRoutes.length === 0 &&
             node.pendingRoutes.length === 0 &&
-            !node.expiresSoon && <span className="text-ink-faint">—</span>}
+            !node.expiresSoon && <span className="text-ink-faint">-</span>}
         </div>
       </Td>
 

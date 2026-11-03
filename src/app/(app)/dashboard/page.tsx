@@ -22,6 +22,7 @@ import {
   ownerLabel,
   relativeTime,
   type NodeView,
+  shortClientVersion,
 } from "@/lib/machines";
 import { cn } from "@/lib/cn";
 import { CoverageView, type CoveragePoint } from "@/components/coverage-view";
@@ -73,9 +74,9 @@ const RECENT_ACTIVITY_LIMIT = 8;
 // --- formatting helpers ----------------------------------------------------
 
 function formatDay(iso: string | null): string {
-  if (!iso) return "—";
+  if (!iso) return "-";
   const t = Date.parse(iso);
-  if (Number.isNaN(t)) return "—";
+  if (Number.isNaN(t)) return "-";
   return new Date(t).toLocaleDateString("en-US", {
     month: "short",
     day: "numeric",
@@ -261,7 +262,7 @@ function osBreakdown(views: NodeView[]): BarDatum[] {
 function versionBreakdown(views: NodeView[]): BarDatum[] {
   const counts = new Map<string, number>();
   for (const view of views) {
-    const label = view.agent?.clientVersion?.trim();
+    const label = shortClientVersion(view.agent?.clientVersion);
     if (label) counts.set(label, (counts.get(label) ?? 0) + 1);
   }
   return topSlices(counts, 8);
@@ -409,7 +410,7 @@ function Widget({
   return (
     <Surface className={cn("flex flex-col overflow-hidden", className)}>
       <div className="flex items-center justify-between gap-2 border-b border-line px-4 py-2.5">
-        <span className="data text-[11px] uppercase tracking-[0.14em] text-ink-faint">
+        <span className="text-sm font-medium text-ink">
           {label}
         </span>
         {right}
@@ -447,7 +448,7 @@ function Stat({
 }) {
   const body = (
     <>
-      <span className="flex items-center gap-1.5 text-[11px] font-medium uppercase tracking-[0.14em] text-ink-faint">
+      <span className="flex items-center gap-1.5 text-xs font-medium text-ink-faint">
         {dot && (
           <span
             className="inline-block h-1.5 w-1.5 rounded-full bg-online-500"
@@ -462,7 +463,7 @@ function Stat({
           />
         )}
       </span>
-      <span className="data text-2xl font-semibold tabular-nums text-ink sm:text-[2.5rem] sm:leading-none">
+      <span className="data text-2xl font-medium tracking-tight tabular-nums text-ink sm:text-[2.25rem] sm:leading-none">
         {value}
       </span>
       {trend && trend.length >= 2 && (
@@ -533,7 +534,7 @@ export default async function DashboardPage() {
       usersApi.list(),
       getAgentPeers(),
     ]);
-    // The agent's own tailnet node is infrastructure, not a device — hide it
+    // The agent's own tailnet node is infrastructure, not a device, so hide it
     // from coverage, counts, and the attention feed.
     const nodeList = withoutAgentNodes(rawNodeList);
     nodes = nodeList;
@@ -635,7 +636,7 @@ export default async function DashboardPage() {
       {/* Signature: the tailnet coverage view. */}
       <Surface grid className="relative overflow-hidden">
         <div className="flex flex-wrap items-center justify-between gap-2 border-b border-line px-4 py-2.5">
-          <span className="data text-[11px] uppercase tracking-[0.14em] text-beacon-500">
+          <span className="text-sm font-medium text-ink">
             Tailnet coverage
           </span>
           <div className="flex items-center gap-4">
@@ -669,7 +670,7 @@ export default async function DashboardPage() {
         <CoverageView points={points} />
       </Surface>
 
-      {/* Compact readout strip — instrument figures, not stat cards. */}
+      {/* Compact readout strip: instrument figures, not stat cards. */}
       <Surface className="grid grid-cols-2 divide-x divide-y divide-line sm:grid-cols-4 sm:divide-y-0">
         <Stat
           label="Devices"
@@ -704,11 +705,11 @@ export default async function DashboardPage() {
         <EmptyState
           icon={RadioTower}
           title="No devices enrolled yet"
-          description="Generate a pre-auth key and connect a machine — it will light up on the coverage map as soon as it checks in."
+          description="Generate a pre-auth key and connect a machine. It will light up on the coverage map as soon as it checks in."
         />
       ) : (
         <>
-          {/* Widget grid — trend, distributions, routing. */}
+          {/* Widget grid: trend, distributions, routing. */}
           <div className="grid gap-4 lg:grid-cols-3">
             <Widget label="Online over time" className="lg:col-span-2">
               {hasTrend ? (
@@ -721,7 +722,7 @@ export default async function DashboardPage() {
                 />
               ) : (
                 <WidgetNote>
-                  Trend appears once Headtower has logged a few snapshots — one is
+                  Trend appears once Headtower has logged a few snapshots. One is
                   recorded each visit, at most every 5 minutes.
                 </WidgetNote>
               )}
@@ -755,7 +756,7 @@ export default async function DashboardPage() {
                       <span className="truncate text-ink-muted">{slice.label}</span>
                       <span className="data ml-auto pl-3 text-ink">{slice.value}</span>
                       <span className="data w-9 text-right text-ink-faint">
-                        {total > 0 ? `${Math.round((slice.value / total) * 100)}%` : "—"}
+                        {total > 0 ? `${Math.round((slice.value / total) * 100)}%` : "-"}
                       </span>
                     </Link>
                   </li>
@@ -853,7 +854,7 @@ export default async function DashboardPage() {
               <Card>
                 <div className="flex items-center gap-2.5 px-4 py-5 text-sm text-ink-muted">
                   <StatusDot status="online" pulse />
-                  All devices online — no keys expiring soon.
+                  All devices online. No keys expiring soon.
                 </div>
               </Card>
             ) : (

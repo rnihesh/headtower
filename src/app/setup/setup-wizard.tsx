@@ -135,7 +135,7 @@ export function SetupWizard({
       <div className="grid-field pointer-events-none absolute inset-0" aria-hidden />
 
       <div className="relative w-full max-w-xl">
-        <div className="overflow-hidden rounded-card border border-line bg-surface shadow-xl shadow-graphite-950/20">
+        <div className="overflow-hidden rounded-card border border-line bg-surface">
           {/* Brand header */}
           <div className="flex items-center gap-3 border-b border-line px-6 py-5">
             <BeaconMark className="h-10 w-10 shrink-0" />
@@ -450,7 +450,7 @@ function Stepper({ current }: { current: number }) {
               className={cn(
                 "data flex h-6 w-6 shrink-0 items-center justify-center rounded-full border text-[11px] font-medium",
                 state === "active" &&
-                  "border-beacon-500 bg-beacon-500 text-graphite-950",
+                  "border-beacon-500 bg-beacon-500 text-on-beacon",
                 state === "done" &&
                   "border-online-600 bg-online-500/15 text-online-500",
                 state === "todo" && "border-line-strong text-ink-faint",
@@ -490,7 +490,7 @@ function StepIntro({
 }) {
   return (
     <div className="flex flex-col gap-1.5">
-      <span className="data text-[11px] uppercase tracking-[0.12em] text-beacon-500">
+      <span className="text-xs text-ink-faint">
         {eyebrow}
       </span>
       <div className="flex items-center gap-2.5">
@@ -562,7 +562,7 @@ function ChoiceCard({
         className={cn(
           "ml-auto mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full border",
           selected
-            ? "border-beacon-500 bg-beacon-500 text-graphite-950"
+            ? "border-beacon-500 bg-beacon-500 text-on-beacon"
             : "border-line-strong",
         )}
       >
@@ -575,7 +575,7 @@ function ChoiceCard({
 function SummaryRow({ label, value }: { label: string; value: React.ReactNode }) {
   return (
     <div className="flex items-center justify-between gap-3 border-b border-line bg-surface px-3.5 py-2.5 last:border-b-0">
-      <dt className="text-[11px] uppercase tracking-[0.08em] text-ink-faint">
+      <dt className="text-xs text-ink-faint">
         {label}
       </dt>
       <dd className="data break-all text-right text-sm text-ink">{value}</dd>

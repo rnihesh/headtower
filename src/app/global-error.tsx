@@ -26,7 +26,7 @@ export default function GlobalError({
     <html lang="en" className="dark">
       <body
         // Inline floor so the page is legible even if globals.css didn't load.
-        style={{ background: "#0e1117", color: "#e6edf3" }}
+        style={{ background: "#0a0a0a", color: "#ededed" }}
       >
         <div className="grid-field flex min-h-screen flex-col items-center justify-center gap-7 px-4 text-center">
           <div className="flex items-center gap-2.5">

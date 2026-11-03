@@ -1,5 +1,5 @@
 /**
- * BarChart — count bars with value labels, vertical or horizontal. Vertical
+ * BarChart: count bars with value labels, vertical or horizontal. Vertical
  * suits a handful of categories (labels sit under each bar); horizontal scales
  * to longer lists and long labels (label + value ride above each bar, so text
  * never collides with the geometry). Bars sit on a faint track; hairline

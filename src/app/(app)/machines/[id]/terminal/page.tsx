@@ -41,7 +41,7 @@ export default async function MachineTerminalPage({
         action={
           <Link
             href={`/machines/${id}`}
-            className="inline-flex items-center gap-1.5 text-sm font-medium text-beacon-500 transition-colors hover:text-beacon-400"
+            className="inline-flex items-center gap-1.5 text-sm font-medium text-ink underline decoration-line-strong underline-offset-4 transition-colors hover:decoration-ink"
           >
             <ArrowLeft className="h-4 w-4" aria-hidden />
             Back to machine

@@ -32,7 +32,7 @@ export default function DashboardLoading() {
         ))}
       </div>
 
-      {/* Widget grid — trend, distributions, routing */}
+      {/* Widget grid: trend, distributions, routing */}
       <div className="grid gap-4 lg:grid-cols-3">
         {[
           "lg:col-span-2",

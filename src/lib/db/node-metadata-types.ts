@@ -112,28 +112,20 @@ export function normalizeLabels(input: readonly string[]): string[] {
 }
 
 /**
- * Deterministic per-label accent colour for chips. The design system is
- * monochrome with a single beacon accent, so the chip body stays neutral; this
- * tints only a small leading dot, giving each label a stable, scannable hue
- * (the Headplane label pattern) WITHOUT repainting the UI. Blue is excluded to
- * respect the palette, and the greens/reds of the status scale are steered
- * clear of so a label never reads as a status.
+ * Deterministic per-label dot colour for chips. The console is monochrome, so
+ * labels get a stable neutral gray (no hue) picked from a lightness band that
+ * stays visible on both light and dark surfaces. The chip body stays neutral;
+ * only the small leading dot varies, so each label is still scannable without
+ * ever reading as a status colour.
  *
- * Returns a CSS `hsl(...)` string for an inline `style`, since these hues are
- * intentionally outside the Tailwind token set.
+ * Returns a CSS `hsl(...)` string for an inline `style`.
  */
 export function labelColor(label: string): string {
   let hash = 0;
   for (let i = 0; i < label.length; i++) {
     hash = (hash * 31 + label.charCodeAt(i)) >>> 0;
   }
-  // Draw the hue from three warm arcs only (amber, magenta, rose), skipping the
-  // cool/blue band entirely, so each label reads as a stable, distinct hue that
-  // is never blue and never mistakable for a status colour.
-  const pick = hash % 120;
-  let hue: number;
-  if (pick < 40) hue = 20 + pick; // amber / orange
-  else if (pick < 80) hue = 300 + (pick - 40); // magenta
-  else hue = (340 + (pick - 80)) % 360; // rose / red
-  return `hsl(${hue} 55% 55%)`;
+  // Six gray steps between 38% and 68% lightness, zero saturation.
+  const lightness = 38 + (hash % 6) * 6;
+  return `hsl(0 0% ${lightness}%)`;
 }

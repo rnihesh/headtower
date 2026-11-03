@@ -1,5 +1,5 @@
 /**
- * Donut — a distribution ring with a center readout and an optional legend.
+ * Donut: a distribution ring with a center readout and an optional legend.
  * Built from stroke-dash arcs (no arc-path maths, handles a single 100% slice
  * cleanly). Slices without an explicit tone fall back to a quiet opacity ramp
  * of `ink` (a theme-flipping token, unlike a fixed graphite shade) so the ring
@@ -40,21 +40,19 @@ export interface DonutProps {
 }
 
 /**
- * Quiet monochrome ramp for un-toned slices, beacon leading. Opacity steps of
- * `ink` rather than fixed graphite shades, so every step still contrasts
- * against the `surface-2` track once `ink` itself flips for the theme.
+ * Quiet monochrome ramp for un-toned slices, beacon leading (beacon is ink by
+ * default). Opacity steps of `ink` rather than fixed shades, so every step
+ * still contrasts against the `surface-2` track once `ink` flips for the theme.
  *
- * Steps are validated (CVD-simulated adjacent-pair ΔE ≥ 15 and ≥ 3:1 against
- * both theme surfaces) — identity is carried by the legend and the slice gaps,
- * not by hue, so don't add steps without re-checking those two properties.
+ * Adjacent steps differ by at least 15 points of opacity so neighbours stay
+ * distinct without hue. Identity is carried by the legend and the slice gaps,
+ * so re-check contrast against both surfaces before adding steps.
  */
 const RAMP: { stroke: string; bg: string }[] = [
   { stroke: "stroke-beacon-500", bg: "bg-beacon-500" },
-  { stroke: "stroke-ink/90", bg: "bg-ink/90" },
-  { stroke: "stroke-ink/70", bg: "bg-ink/70" },
   { stroke: "stroke-ink/50", bg: "bg-ink/50" },
   { stroke: "stroke-ink/80", bg: "bg-ink/80" },
-  { stroke: "stroke-ink/60", bg: "bg-ink/60" },
+  { stroke: "stroke-ink/62", bg: "bg-ink/62" },
 ];
 
 function sliceColor(slice: DonutSlice, i: number): { stroke: string; bg: string } {
@@ -199,7 +197,7 @@ export function Donut({
               <span className="truncate text-ink-muted">{slice.label}</span>
               <span className="data ml-auto pl-3 text-ink">{slice.value}</span>
               <span className="data w-9 text-right text-ink-faint">
-                {total > 0 ? `${Math.round(frac * 100)}%` : "—"}
+                {total > 0 ? `${Math.round(frac * 100)}%` : "-"}
               </span>
             </li>
           ))}

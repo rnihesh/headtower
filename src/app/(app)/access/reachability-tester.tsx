@@ -229,7 +229,7 @@ function VerdictCard({
       )}
     >
       <div className="flex items-center justify-between gap-2">
-        <span className="text-[11px] font-medium uppercase tracking-[0.08em] text-ink-faint">
+        <span className="text-xs font-medium text-ink-faint">
           {title}
         </span>
         <span

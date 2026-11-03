@@ -71,10 +71,10 @@ export interface AddDeviceDialogProps {
   initialRegisterKey?: string;
 }
 
-/** The success branch of {@link CreateDeviceKeyState} — what the "create key" reveal step renders. */
+/** The success branch of {@link CreateDeviceKeyState}: what the "create key" reveal step renders. */
 type CreatedDevice = Extract<CreateDeviceKeyState, { status: "success" }>;
 
-/** The success branch of {@link RegisterDeviceState} — what the "register device" confirmation renders. */
+/** The success branch of {@link RegisterDeviceState}: what the "register device" confirmation renders. */
 type RegisteredDevice = Extract<RegisterDeviceState, { status: "success" }>;
 
 type DeviceOS = "macos" | "linux" | "windows" | "ios" | "android";
@@ -248,7 +248,7 @@ export function AddDeviceDialog({
                 />
                 <p className="flex items-start gap-1.5 text-xs text-ink-faint">
                   <TriangleAlert className="mt-0.5 h-3.5 w-3.5 shrink-0" aria-hidden />
-                  Keys are shown once — copy it now, it can&apos;t be retrieved again.
+                  Keys are shown once. Copy it now, it can&apos;t be retrieved again.
                 </p>
               </DialogBody>
               <DialogFooter>
@@ -280,7 +280,7 @@ export function AddDeviceDialog({
                 </Field>
 
                 <fieldset className="flex flex-col gap-3">
-                  <legend className="mb-1 text-[11px] font-medium uppercase tracking-[0.08em] text-ink-muted">
+                  <legend className="mb-1 text-xs font-medium text-ink-muted">
                     Properties
                   </legend>
                   <CheckRow
@@ -467,7 +467,7 @@ function dialogCopy(
   if (mode === "existing") {
     return {
       title: "Add device",
-      description: "Build the enrolment command for a key you already have — no new key is minted.",
+      description: "Build the enrolment command for a key you already have. No new key is minted.",
     };
   }
   return registered
@@ -560,8 +560,8 @@ function RegisterCommandHint({ loginServerUrl }: { loginServerUrl: string }) {
   return (
     <div className="flex flex-col gap-2">
       <p className="text-xs text-ink-muted">
-        On the device, run this with no authkey. It prints a registration key
-        — a <code className="data text-ink">nodekey:...</code> value, or a URL
+        On the device, run this with no authkey. It prints a registration key:
+        a <code className="data text-ink">nodekey:...</code> value, or a URL
         ending in one.
       </p>
       <div className="flex flex-col gap-2 sm:flex-row sm:items-start">
@@ -628,7 +628,7 @@ function KeyReveal({ value }: { value: string }) {
   );
 }
 
-/** A mono value in a copyable box — the per-OS command, or the bare key for mobile. */
+/** A mono value in a copyable box: the per-OS command, or the bare key for mobile. */
 function CommandBox({ value, copyLabel }: { value: string; copyLabel: string }) {
   return (
     <div className="flex items-start gap-2 rounded-control border border-line-strong bg-surface-2 p-3">
@@ -743,7 +743,7 @@ function OsCommandTabs({
   );
 }
 
-// Hosts that only resolve inside the deploy's own network — a `tailscale up`
+// Hosts that only resolve inside the deploy's own network: a `tailscale up`
 // command built from one of these means nothing off-box, so the tabs swap in a
 // placeholder and point the operator at the setting that fixes it.
 function looksInternal(url: string): boolean {
@@ -768,7 +768,7 @@ function InternalUrlHint() {
       manual swap. Set one in{" "}
       <Link
         href="/settings/connection"
-        className="text-beacon-500 transition-colors hover:text-beacon-400"
+        className="text-ink underline decoration-line-strong underline-offset-4 transition-colors hover:decoration-ink"
       >
         Settings &gt; Connection
       </Link>{" "}

@@ -116,7 +116,7 @@ export function CreatePreAuthKeyDialog({
               <EnrolCommand loginServerUrl={loginServerUrl} authKey={createdKey} />
               <p className="flex items-start gap-1.5 text-xs text-ink-faint">
                 <TriangleAlert className="mt-0.5 h-3.5 w-3.5 shrink-0" aria-hidden />
-                Keys are shown once — copy it now, it can&apos;t be retrieved
+                Keys are shown once. Copy it now, it can&apos;t be retrieved
                 again.
               </p>
             </DialogBody>
@@ -162,7 +162,7 @@ export function CreatePreAuthKeyDialog({
               </Field>
 
               <fieldset className="flex flex-col gap-3">
-                <legend className="mb-1 text-[11px] font-medium uppercase tracking-[0.08em] text-ink-muted">
+                <legend className="mb-1 text-xs font-medium text-ink-muted">
                   Properties
                 </legend>
                 <CheckRow
@@ -237,7 +237,7 @@ function EnrolCommand({
 
   return (
     <div className="flex flex-col gap-2">
-      <span className="text-[11px] font-medium uppercase tracking-[0.08em] text-ink-faint">
+      <span className="text-xs font-medium text-ink-faint">
         Enrolment command
       </span>
       <div className="flex items-start gap-2 rounded-control border border-line-strong bg-surface-2 p-3">
@@ -252,7 +252,7 @@ function EnrolCommand({
           manual swap. Set one in{" "}
           <Link
             href="/settings/connection"
-            className="text-beacon-500 transition-colors hover:text-beacon-400"
+            className="text-ink underline decoration-line-strong underline-offset-4 transition-colors hover:decoration-ink"
           >
             Settings &gt; Connection
           </Link>{" "}

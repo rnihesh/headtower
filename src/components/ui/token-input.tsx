@@ -229,7 +229,7 @@ export function TokenInput({
               left: popoverRect.left,
               width: popoverRect.width,
             }}
-            className="z-50 max-h-48 overflow-y-auto rounded-control border border-line-strong bg-surface p-1 shadow-xl shadow-graphite-950/30"
+            className="z-50 max-h-48 overflow-y-auto rounded-control border border-line-strong bg-surface p-1 shadow-lg shadow-black/10"
           >
             {filtered.map((suggestion, index) => (
               <li key={suggestion} role="presentation">

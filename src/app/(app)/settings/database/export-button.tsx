@@ -23,7 +23,7 @@ export function ExportDatabaseButton({ canWrite }: { canWrite: boolean }) {
     "inline-flex h-9 shrink-0 select-none items-center gap-2 whitespace-nowrap rounded-control border px-3.5 text-sm font-medium transition-colors",
     "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-beacon-500/50 focus-visible:ring-offset-2 focus-visible:ring-offset-canvas",
     canWrite
-      ? "border-beacon-500 bg-beacon-500 text-graphite-950 hover:bg-beacon-400 active:bg-beacon-600"
+      ? "border-beacon-500 bg-beacon-500 text-on-beacon hover:bg-beacon-400 active:bg-beacon-600"
       : "pointer-events-none border-line bg-surface text-ink-faint opacity-50",
   );
 

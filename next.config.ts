@@ -21,6 +21,8 @@ const SECURITY_HEADERS = [
 const nextConfig: NextConfig = {
   // Emit a self-contained server bundle so the Docker image stays lean.
   output: "standalone",
+  // AGENTS.md is hand-maintained; don't let `next dev` rewrite it.
+  agentRules: false,
   ...(basePath ? { basePath } : {}),
   async headers() {
     return [{ source: "/:path*", headers: [...SECURITY_HEADERS] }];
